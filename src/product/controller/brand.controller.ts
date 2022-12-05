@@ -11,10 +11,10 @@ import {
     Put,
     Query,
 } from '@nestjs/common';
-import { CreateBrandDTO, UpdateBrandDTO } from 'src/dto/brand.dto';
-import { Brand } from 'src/entity/brand.entity';
-import { ApiResponse } from 'src/interface/api-response.interface';
-import { BrandService } from 'src/service/brand.service';
+import { CreateBrandDTO, UpdateBrandDTO } from 'src/product/dto/brand.dto';
+import { Brand } from 'src/product/entity/brand.entity';
+import { ApiResponse } from 'src/common/interface/api-response.interface';
+import { BrandService } from 'src/product/service/brand.service';
 
 @Controller('brand')
 export class BrandController {

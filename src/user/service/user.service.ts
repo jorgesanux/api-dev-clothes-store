@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { CreateUserDTO, UpdateUserDTO } from 'src/dto/user.dto';
-import { User } from 'src/entity/user.entity';
-import { BaseServiceInterface } from 'src/interface/base-service.interface';
+import { CreateUserDTO, UpdateUserDTO } from 'src/user/dto/user.dto';
+import { User } from 'src/user/entity/user.entity';
+import { BaseServiceInterface } from 'src/common/interface/base-service.interface';
 
 @Injectable()
 export class UserService implements BaseServiceInterface<User, number> {

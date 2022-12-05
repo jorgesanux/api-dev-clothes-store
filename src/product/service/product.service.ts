@@ -1,8 +1,11 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { CreateProductDTO, UpdateProductDTO } from 'src/dto/product.dto';
+import {
+    CreateProductDTO,
+    UpdateProductDTO,
+} from 'src/product/dto/product.dto';
 
-import { Product } from 'src/entity/product.entity';
-import { BaseServiceInterface } from 'src/interface/base-service.interface';
+import { Product } from 'src/product/entity/product.entity';
+import { BaseServiceInterface } from 'src/common/interface/base-service.interface';
 
 @Injectable()
 export class ProductService implements BaseServiceInterface<Product, number> {
