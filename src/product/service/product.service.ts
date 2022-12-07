@@ -25,6 +25,18 @@ export class ProductService implements BaseServiceInterface<Product, number> {
         return product;
     }
 
+    findMany(ids: number[]): Product[] {
+        const products: Product[] = [];
+        for (const id of ids) {
+            const product = this.products.find((p) => p.id === id);
+            if (!product) {
+                throw new NotFoundException(`Product with id ${id} not found`);
+            }
+            products.push(product);
+        }
+        return products;
+    }
+
     create(payload: CreateProductDTO): Product {
         this.SEQUENCE++;
         const product: Product = {
