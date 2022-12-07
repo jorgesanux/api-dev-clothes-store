@@ -13,6 +13,7 @@ async function bootstrap() {
         }),
     );
     app.setGlobalPrefix("/api");
+    app.enableCors();
 
     const configSwagger = new DocumentBuilder()
         .setTitle("API Dev clothes Store")
