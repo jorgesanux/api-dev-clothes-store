@@ -11,11 +11,16 @@ import {
     Put,
     Query,
 } from '@nestjs/common';
-import { CreateCustomerDTO, UpdateCustomerDTO } from 'src/dto/customer.dto';
-import { Customer } from 'src/entity/customer.entity';
-import { ApiResponse } from 'src/interface/api-response.interface';
-import { CustomerService } from 'src/service/customer.service';
+import {
+    CreateCustomerDTO,
+    UpdateCustomerDTO,
+} from 'src/user/dto/customer.dto';
+import { Customer } from 'src/user/entity/customer.entity';
+import { ApiResponse } from 'src/common/interface/api-response.interface';
+import { CustomerService } from 'src/user/service/customer.service';
+import { ApiTags } from "@nestjs/swagger";
 
+@ApiTags("Customer")
 @Controller('customer')
 export class CustomerController {
     constructor(private customerService: CustomerService) {}

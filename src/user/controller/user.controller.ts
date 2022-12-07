@@ -4,25 +4,37 @@ import {
     Delete,
     Get,
     HttpCode,
-    HttpStatus,
+    HttpStatus, Inject,
     Param,
     ParseIntPipe,
     Post,
     Put,
-    Query,
-} from '@nestjs/common';
-import { CreateUserDTO, UpdateUserDTO } from 'src/dto/user.dto';
-import { User } from 'src/entity/user.entity';
-import { ApiResponse } from 'src/interface/api-response.interface';
-import { UserService } from 'src/service/user.service';
+    Query
+} from "@nestjs/common";
+import { CreateUserDTO, UpdateUserDTO } from 'src/user/dto/user.dto';
+import { User } from 'src/user/entity/user.entity';
+import { ApiResponse } from 'src/common/interface/api-response.interface';
+import { UserService } from 'src/user/service/user.service';
 
+import config from "src/config";
+import { ConfigType } from "@nestjs/config";
+import { ConfigService } from "@nestjs/config";
+import { ApiTags } from "@nestjs/swagger";
+
+@ApiTags("User")
 @Controller('user')
 export class UserController {
-    constructor(private userService: UserService) {}
+    constructor(
+        private userService: UserService,
+        @Inject(config.KEY) private configProperties: ConfigType<typeof config>,
+        private configService: ConfigService
+    ) {}
 
     @Get('/')
     @HttpCode(HttpStatus.OK)
     getAll(@Query('limit') limit = 10): ApiResponse<User> {
+        console.log(this.configProperties.database.postgresql.name);
+        console.log(this.configService.get("PS_NAME"));
         const response: ApiResponse<User> = {
             statusCode: HttpStatus.OK,
             message: 'OK',

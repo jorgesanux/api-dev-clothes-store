@@ -1,7 +1,10 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { CreateCategoryDTO, UpdateCategoryDTO } from 'src/dto/category.dto';
-import { Category } from 'src/entity/category.entity';
-import { BaseServiceInterface } from 'src/interface/base-service.interface';
+import {
+    CreateCategoryDTO,
+    UpdateCategoryDTO,
+} from 'src/product/dto/category.dto';
+import { Category } from 'src/product/entity/category.entity';
+import { BaseServiceInterface } from 'src/common/interface/base-service.interface';
 
 @Injectable()
 export class CategoryService implements BaseServiceInterface<Category, number> {

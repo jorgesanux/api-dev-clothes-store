@@ -12,11 +12,16 @@ import {
     Query,
 } from '@nestjs/common';
 
-import { ApiResponse } from 'src/interface/api-response.interface';
-import { Category } from 'src/entity/category.entity';
-import { CategoryService } from 'src/service/category.service';
-import { CreateCategoryDTO, UpdateCategoryDTO } from 'src/dto/category.dto';
+import { ApiResponse } from 'src/common/interface/api-response.interface';
+import { Category } from 'src/product/entity/category.entity';
+import { CategoryService } from 'src/product/service/category.service';
+import {
+    CreateCategoryDTO,
+    UpdateCategoryDTO,
+} from 'src/product/dto/category.dto';
+import { ApiTags } from "@nestjs/swagger";
 
+@ApiTags("Category")
 @Controller('category')
 export class CategoryController {
     constructor(private categoryService: CategoryService) {}

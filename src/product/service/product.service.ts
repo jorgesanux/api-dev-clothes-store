@@ -1,8 +1,11 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { CreateProductDTO, UpdateProductDTO } from 'src/dto/product.dto';
+import {
+    CreateProductDTO,
+    UpdateProductDTO,
+} from 'src/product/dto/product.dto';
 
-import { Product } from 'src/entity/product.entity';
-import { BaseServiceInterface } from 'src/interface/base-service.interface';
+import { Product } from 'src/product/entity/product.entity';
+import { BaseServiceInterface } from 'src/common/interface/base-service.interface';
 
 @Injectable()
 export class ProductService implements BaseServiceInterface<Product, number> {
@@ -20,6 +23,18 @@ export class ProductService implements BaseServiceInterface<Product, number> {
             throw new NotFoundException(`Product with id ${id} not found`);
         }
         return product;
+    }
+
+    findMany(ids: number[]): Product[] {
+        const products: Product[] = [];
+        for (const id of ids) {
+            const product = this.products.find((p) => p.id === id);
+            if (!product) {
+                throw new NotFoundException(`Product with id ${id} not found`);
+            }
+            products.push(product);
+        }
+        return products;
     }
 
     create(payload: CreateProductDTO): Product {
