@@ -1,6 +1,7 @@
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
+import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 
 async function bootstrap() {
     const app = await NestFactory.create(AppModule);
@@ -11,6 +12,17 @@ async function bootstrap() {
             disableErrorMessages: process.env.ENVIRONMENT === 'production',
         }),
     );
+    app.setGlobalPrefix("/api");
+
+    const configSwagger = new DocumentBuilder()
+        .setTitle("API Dev clothes Store")
+        .setDescription("API developed in base to Platzi's NestJs course")
+        .setVersion("0.0.1")
+        .setContact("Jorge Sanabria", "https://github.com/jorgesanux", "jorgesanux1@gmail.com")
+        .build();
+    const documentSwagger = SwaggerModule.createDocument(app, configSwagger);
+    SwaggerModule.setup("docs", app, documentSwagger);
+
     await app.listen(3000);
 }
 bootstrap();

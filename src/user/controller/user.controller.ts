@@ -19,7 +19,9 @@ import { UserService } from 'src/user/service/user.service';
 import config from "src/config";
 import { ConfigType } from "@nestjs/config";
 import { ConfigService } from "@nestjs/config";
+import { ApiTags } from "@nestjs/swagger";
 
+@ApiTags("User")
 @Controller('user')
 export class UserController {
     constructor(
