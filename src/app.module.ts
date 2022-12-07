@@ -1,5 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from "@nestjs/config";
+import * as Joi from "joi";
+
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UserModule } from './user/user.module';
@@ -12,7 +14,13 @@ import config from "./config";
         ConfigModule.forRoot({
             envFilePath: ".env",
             load: [config],
-            isGlobal: true
+            isGlobal: true,
+            //TODO: Validate how to do this schema validation with class-validator
+            validationSchema: Joi.object({
+                PS_NAME: Joi.string().required(),
+                PS_PORT: Joi.number().required(),
+                API_KEY: Joi.string().required(),
+            }),
         }),
         UserModule,
         ProductModule,
