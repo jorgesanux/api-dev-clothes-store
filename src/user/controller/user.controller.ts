@@ -11,45 +11,41 @@ import {
     Put,
     Query
 } from "@nestjs/common";
+import { Client } from "pg";
+import { ApiTags } from "@nestjs/swagger";
+
 import { CreateUserDTO, UpdateUserDTO } from 'src/user/dto/user.dto';
 import { User } from 'src/user/entity/user.entity';
 import { ApiResponse } from 'src/common/interface/api-response.interface';
 import { UserService } from 'src/user/service/user.service';
-
-import config from "src/config";
-import { ConfigType } from "@nestjs/config";
-import { ConfigService } from "@nestjs/config";
-import { ApiTags } from "@nestjs/swagger";
+import { Constant } from "../../common/constant";
 
 @ApiTags("User")
 @Controller('user')
 export class UserController {
     constructor(
+        @Inject(Constant.providerKeys.PG_CLIENT) private client: Client,
         private userService: UserService,
-        @Inject(config.KEY) private configProperties: ConfigType<typeof config>,
-        private configService: ConfigService
     ) {}
 
     @Get('/')
     @HttpCode(HttpStatus.OK)
-    getAll(@Query('limit') limit = 10): ApiResponse<User> {
-        console.log(this.configProperties.database.postgresql.name);
-        console.log(this.configService.get("PS_NAME"));
+    async getAll(@Query('limit') limit = 10): Promise<ApiResponse<User>> {
         const response: ApiResponse<User> = {
             statusCode: HttpStatus.OK,
             message: 'OK',
-            results: this.userService.findAll(),
+            results: await this.userService.findAll(),
         };
         return response;
     }
 
     @Get('/:id')
     @HttpCode(HttpStatus.OK)
-    getById(@Param('id', ParseIntPipe) id: number): ApiResponse<User> {
+    async getById(@Param('id', ParseIntPipe) id: number): Promise<ApiResponse<User>> {
         const response: ApiResponse<User> = {
             message: 'OK',
             statusCode: HttpStatus.OK,
-            result: this.userService.findOne(id),
+            result: await this.userService.findOne(id),
         };
         return response;
     }

@@ -1,23 +1,39 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Inject, Injectable, InternalServerErrorException, NotFoundException } from "@nestjs/common";
 import { CreateUserDTO, UpdateUserDTO } from 'src/user/dto/user.dto';
 import { User } from 'src/user/entity/user.entity';
 import { BaseServiceInterface } from 'src/common/interface/base-service.interface';
+import { Constant } from "../../common/constant";
+import { Client, QueryResult } from "pg";
 
 @Injectable()
 export class UserService implements BaseServiceInterface<User, number> {
     private SEQUENCE = 0;
     private users: User[] = [];
 
-    findAll(): User[] {
-        return this.users;
+    constructor(
+        @Inject(Constant.providerKeys.PG_CLIENT) private clientDbPg: Client,
+    ) { }
+
+    async findAll(): Promise<User[]> {
+        try{
+            let queryResult: QueryResult<User> = await this.clientDbPg.query("select * from users");
+            return queryResult.rows;
+        }catch(error: unknown){
+            throw new InternalServerErrorException((error as Error).message);
+        }
     }
 
-    findOne(id: number): User {
-        const user: User = this.users.find((c) => c.id === id);
-        if (!user) {
-            throw new NotFoundException(`User with id ${id} not found`);
+    async findOne(id: number): Promise<User> {
+        try{
+            let queryResult: QueryResult<User> = await this.clientDbPg.query("select * from users where id=$1", [id]);
+            if(queryResult.rows.length <= 0) throw new NotFoundException(`User with id ${id} not found`);
+            return queryResult.rows[0];
+        }catch(error: unknown){
+            if(error instanceof NotFoundException){
+                throw error;
+            }
+            throw new InternalServerErrorException((error as Error).message);
         }
-        return user;
     }
 
     create(payload: CreateUserDTO): User {
