@@ -1,28 +1,32 @@
-import { Global, Module, Provider } from "@nestjs/common";
+import { DynamicModule, Global, Module } from "@nestjs/common";
 import { ConfigType } from "@nestjs/config";
-import { Client } from "pg";
+import { TypeOrmModule, TypeOrmModuleOptions } from "@nestjs/typeorm";
 
 import config from "../config";
-import { Constant } from "../common/constant";
 
-const databaseProvider: Provider<Client> = {
-    provide: Constant.providerKeys.PG_CLIENT,
-    useFactory: async (configProperties: ConfigType<typeof config>) => {
-        let client: Client = new Client({
+const typeOrmModule: DynamicModule = TypeOrmModule.forRootAsync({
+    useFactory: async (configProperties: ConfigType<typeof config>): Promise<TypeOrmModuleOptions> => {
+        return {
+            type: "postgres",
             host: configProperties.database.postgresql.host,
             port: configProperties.database.postgresql.port,
             database: configProperties.database.postgresql.database,
-            user: configProperties.database.postgresql.user,
+            username: configProperties.database.postgresql.user,
             password: configProperties.database.postgresql.pass,
-        });
-        await client.connect();
-        return client;
+            entities: [],
+            synchronize: true, //Not recommended for production
+            autoLoadEntities: true
+        };
     },
     inject: [config.KEY]
-};
+});
+
 @Global()
 @Module({
-    providers: [ databaseProvider ],
-    exports: [ Constant.providerKeys.PG_CLIENT ]
+    imports: [ typeOrmModule ],
+    providers: [],
+    exports: [
+        typeOrmModule
+    ]
 })
 export class DatabaseModule {}

@@ -1,64 +1,65 @@
-import { Inject, Injectable, InternalServerErrorException, NotFoundException } from "@nestjs/common";
-import { CreateUserDTO, UpdateUserDTO } from 'src/user/dto/user.dto';
-import { User } from 'src/user/entity/user.entity';
+import {
+    ConflictException,
+    Injectable,
+    InternalServerErrorException,
+    NotFoundException,
+    UnprocessableEntityException
+} from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { DeleteResult, QueryFailedError, Repository } from "typeorm";
+
 import { BaseServiceInterface } from 'src/common/interface/base-service.interface';
-import { Constant } from "../../common/constant";
-import { Client, QueryResult } from "pg";
+import { User } from 'src/user/entity/user.entity';
+import { CreateUserDTO, UpdateUserDTO } from 'src/user/dto/user.dto';
+import { QueryFailedErrorHandler } from "../../common/handler/query_failed_error.handler";
+
 
 @Injectable()
 export class UserService implements BaseServiceInterface<User, number> {
-    private SEQUENCE = 0;
-    private users: User[] = [];
-
     constructor(
-        @Inject(Constant.providerKeys.PG_CLIENT) private clientDbPg: Client,
+        @InjectRepository(User) private userRepository: Repository<User>,
     ) { }
 
     async findAll(): Promise<User[]> {
-        try{
-            let queryResult: QueryResult<User> = await this.clientDbPg.query("select * from users");
-            return queryResult.rows;
-        }catch(error: unknown){
-            throw new InternalServerErrorException((error as Error).message);
-        }
+        return this.userRepository.find({
+            order: { id: "DESC" }
+        });
     }
 
     async findOne(id: number): Promise<User> {
+        let user: User = await this.userRepository.findOneBy({ id });
+        if(user !== null) return user;
+
+        throw new NotFoundException(`User with id ${id} not found`);
+    }
+
+    async create(payload: CreateUserDTO): Promise<User> {
         try{
-            let queryResult: QueryResult<User> = await this.clientDbPg.query("select * from users where id=$1", [id]);
-            if(queryResult.rows.length <= 0) throw new NotFoundException(`User with id ${id} not found`);
-            return queryResult.rows[0];
-        }catch(error: unknown){
-            if(error instanceof NotFoundException){
-                throw error;
-            }
-            throw new InternalServerErrorException((error as Error).message);
+            const user: User = this.userRepository.create(payload);
+            return await this.userRepository.save(user);
+        }catch(e: unknown){
+            if(e instanceof QueryFailedError) QueryFailedErrorHandler.handle((e as QueryFailedError));
+            throw e;
         }
     }
 
-    create(payload: CreateUserDTO): User {
-        this.SEQUENCE++;
-        const user: User = {
-            id: this.SEQUENCE,
-            ...payload,
-        };
-        this.users.push(user);
-        return user;
+    async update(id: number, payload: UpdateUserDTO): Promise<User> {
+        try{
+            const user: User = await this.findOne(id);
+            await this.userRepository.merge(user, payload);
+            return await this.userRepository.save(user);
+        }catch(e: unknown){
+            if(e instanceof QueryFailedError) QueryFailedErrorHandler.handle((e as QueryFailedError));
+            throw e;
+        }
     }
 
-    update(id: number, payload: UpdateUserDTO): User {
-        const userIndex = this.users.findIndex((c) => c.id === id);
-        if (userIndex < 0) {
-            throw new NotFoundException(`User with id ${id} not found`);
-        }
-        return Object.assign(this.users[userIndex], payload);
-    }
-
-    delete(id: number): User {
-        const userIndex = this.users.findIndex((c) => c.id === id);
-        if (userIndex < 0) {
-            throw new NotFoundException(`User with id ${id} not found`);
-        }
-        return this.users.splice(userIndex, 1)[0];
+    async delete(id: number): Promise<User> {
+        const user: User = await this.findOne(id);
+        const result: DeleteResult = await this.userRepository.delete({
+            id: user.id
+        });
+        if(result.affected > 0) return user;
+        throw new InternalServerErrorException(`Can not delete the user with id ${id}`);
     }
 }
