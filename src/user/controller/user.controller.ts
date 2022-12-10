@@ -11,13 +11,14 @@ import {
     Put,
     Query, UnprocessableEntityException
 } from "@nestjs/common";
-import { ApiTags } from "@nestjs/swagger";
+import { ApiQuery, ApiTags } from "@nestjs/swagger";
 
 import { CreateUserDTO, UpdateUserDTO } from 'src/user/dto/user.dto';
 import { User } from 'src/user/entity/user.entity';
 import { ApiResponse } from 'src/common/interface/api_response.interface';
 import { UserService } from 'src/user/service/user.service';
 import { QueryFailedError } from "typeorm";
+import { Constant } from "../../common/constant";
 
 @ApiTags("User")
 @Controller('user')
@@ -26,13 +27,24 @@ export class UserController {
         private userService: UserService,
     ) {}
 
+    @ApiQuery({ name: "limit", type: "number", required: false })
+    @ApiQuery({ name: "page", type: "number", required: false })
     @Get('/')
     @HttpCode(HttpStatus.OK)
-    async getAll(@Query('limit') limit = 10): Promise<ApiResponse<User>> {
+    async getAll(
+        @Query('limit') limit = Constant.controllerParams.LIMIT,
+        @Query('page') page = Constant.controllerParams.PAGE,
+    ): Promise<ApiResponse<User>> {
+        if( limit <= 0 ) limit = Constant.controllerParams.LIMIT;
+        if( page <= 0 ) page = Constant.controllerParams.PAGE;
+
+        const [users, count] = await this.userService.findAll(limit, page);
+
         const response: ApiResponse<User> = {
             statusCode: HttpStatus.OK,
             message: 'OK',
-            results: await this.userService.findAll(),
+            results: users,
+            count
         };
         return response;
     }

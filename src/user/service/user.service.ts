@@ -12,6 +12,7 @@ import { BaseServiceInterface } from 'src/common/interface/base-service.interfac
 import { User } from 'src/user/entity/user.entity';
 import { CreateUserDTO, UpdateUserDTO } from 'src/user/dto/user.dto';
 import { QueryFailedErrorHandler } from "../../common/handler/query_failed_error.handler";
+import { Constant } from "../../common/constant";
 
 
 @Injectable()
@@ -20,9 +21,11 @@ export class UserService implements BaseServiceInterface<User, number> {
         @InjectRepository(User) private userRepository: Repository<User>,
     ) { }
 
-    async findAll(): Promise<User[]> {
-        return this.userRepository.find({
-            order: { id: "DESC" }
+    async findAll( limit: number, page: number ): Promise<[User[], number]> {
+        return this.userRepository.findAndCount({
+            order: { id: "DESC" },
+            take: limit,
+            skip: (limit * page) - limit
         });
     }
 
