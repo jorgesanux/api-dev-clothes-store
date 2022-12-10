@@ -15,7 +15,7 @@ import { ApiTags } from "@nestjs/swagger";
 
 import { CreateUserDTO, UpdateUserDTO } from 'src/user/dto/user.dto';
 import { User } from 'src/user/entity/user.entity';
-import { ApiResponse } from 'src/common/interface/api-response.interface';
+import { ApiResponse } from 'src/common/interface/api_response.interface';
 import { UserService } from 'src/user/service/user.service';
 import { QueryFailedError } from "typeorm";
 

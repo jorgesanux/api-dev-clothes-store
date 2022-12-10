@@ -16,7 +16,7 @@ import {
     UpdateCustomerDTO,
 } from 'src/user/dto/customer.dto';
 import { Customer } from 'src/user/entity/customer.entity';
-import { ApiResponse } from 'src/common/interface/api-response.interface';
+import { ApiResponse } from 'src/common/interface/api_response.interface';
 import { CustomerService } from 'src/user/service/customer.service';
 import { ApiTags } from "@nestjs/swagger";
 

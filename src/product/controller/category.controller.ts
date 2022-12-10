@@ -12,7 +12,7 @@ import {
     Query,
 } from '@nestjs/common';
 
-import { ApiResponse } from 'src/common/interface/api-response.interface';
+import { ApiResponse } from 'src/common/interface/api_response.interface';
 import { Category } from 'src/product/entity/category.entity';
 import { CategoryService } from 'src/product/service/category.service';
 import {

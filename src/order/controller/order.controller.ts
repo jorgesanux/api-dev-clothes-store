@@ -10,7 +10,7 @@ import {
     Put,
     Query,
 } from '@nestjs/common';
-import { ApiResponse } from 'src/common/interface/api-response.interface';
+import { ApiResponse } from 'src/common/interface/api_response.interface';
 import { ProductService } from 'src/product/service/product.service';
 import { CustomerService } from 'src/user/service/customer.service';
 import { CreateOrderDTO, UpdateOrderDTO } from '../dto/order.dto';

@@ -13,7 +13,7 @@ import {
 } from '@nestjs/common';
 import { CreateBrandDTO, UpdateBrandDTO } from 'src/product/dto/brand.dto';
 import { Brand } from 'src/product/entity/brand.entity';
-import { ApiResponse } from 'src/common/interface/api-response.interface';
+import { ApiResponse } from 'src/common/interface/api_response.interface';
 import { BrandService } from 'src/product/service/brand.service';
 import { ApiTags } from "@nestjs/swagger";
 

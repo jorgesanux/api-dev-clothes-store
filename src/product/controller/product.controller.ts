@@ -20,7 +20,7 @@ import {
     UpdateProductDTO,
 } from 'src/product/dto/product.dto';
 import { ProductService } from 'src/product/service/product.service';
-import { ApiResponse } from 'src/common/interface/api-response.interface';
+import { ApiResponse } from 'src/common/interface/api_response.interface';
 import { ApiTags } from "@nestjs/swagger";
 
 @ApiTags("Product")
