@@ -6,11 +6,11 @@ import {
     HttpCode,
     HttpStatus,
     Param,
-    ParseIntPipe,
+    ParseUUIDPipe,
     Post,
     Put,
-    Query,
-} from '@nestjs/common';
+    Query
+} from "@nestjs/common";
 import { ApiQuery, ApiTags } from '@nestjs/swagger';
 
 import { CreateUserDTO, UpdateUserDTO } from 'src/user/dto/user.dto';
@@ -49,7 +49,7 @@ export class UserController {
     @Get('/:id')
     @HttpCode(HttpStatus.OK)
     async getById(
-        @Param('id', ParseIntPipe) id: number,
+        @Param('id', ParseUUIDPipe) id: string,
     ): Promise<ApiResponse<User>> {
         const response: ApiResponse<User> = {
             message: 'OK',
@@ -73,7 +73,7 @@ export class UserController {
     @Put('/:id')
     @HttpCode(HttpStatus.OK)
     async update(
-        @Param('id', ParseIntPipe) id: number,
+        @Param('id', ParseUUIDPipe) id: string,
         @Body() body: UpdateUserDTO,
     ): Promise<ApiResponse<User>> {
         const response: ApiResponse<User> = {
@@ -87,7 +87,7 @@ export class UserController {
     @Delete('/:id')
     @HttpCode(HttpStatus.OK)
     async delete(
-        @Param('id', ParseIntPipe) id: number,
+        @Param('id', ParseUUIDPipe) id: string,
     ): Promise<ApiResponse<User>> {
         const response: ApiResponse<User> = {
             message: 'Deleted',

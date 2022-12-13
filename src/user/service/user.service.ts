@@ -15,7 +15,7 @@ import { QueryFailedErrorHandler } from '../../common/handler/query_failed_error
 import { Constant } from '../../common/constant';
 
 @Injectable()
-export class UserService implements BaseServiceInterface<User, number> {
+export class UserService implements BaseServiceInterface<User, string> {
     constructor(
         @InjectRepository(User) private userRepository: Repository<User>,
     ) {}
@@ -28,7 +28,7 @@ export class UserService implements BaseServiceInterface<User, number> {
         });
     }
 
-    async findOne(id: number): Promise<User> {
+    async findOne(id: string): Promise<User> {
         const user: User = await this.userRepository.findOneBy({ id });
         if (user !== null) return user;
 
@@ -46,7 +46,7 @@ export class UserService implements BaseServiceInterface<User, number> {
         }
     }
 
-    async update(id: number, payload: UpdateUserDTO): Promise<User> {
+    async update(id: string, payload: UpdateUserDTO): Promise<User> {
         try {
             const user: User = await this.findOne(id);
             await this.userRepository.merge(user, payload);
@@ -58,7 +58,7 @@ export class UserService implements BaseServiceInterface<User, number> {
         }
     }
 
-    async delete(id: number): Promise<User> {
+    async delete(id: string): Promise<User> {
         const user: User = await this.findOne(id);
         const result: DeleteResult = await this.userRepository.delete({
             id: user.id,
