@@ -1,48 +1,64 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, InternalServerErrorException, NotFoundException } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { DeleteResult, QueryFailedError, Repository } from "typeorm";
+
 import { CreateBrandDTO, UpdateBrandDTO } from 'src/product/dto/brand.dto';
 import { Brand } from 'src/product/entity/brand.entity';
 import { BaseServiceInterface } from 'src/common/interface/base-service.interface';
+import { QueryFailedErrorHandler } from "src/common/handler/query_failed_error.handler";
 
 @Injectable()
-export class BrandService implements BaseServiceInterface<Brand, number> {
-    private SEQUENCE = 0;
-    private brands: Brand[] = [];
+export class BrandService implements BaseServiceInterface<Brand, string> {
+    constructor(
+        @InjectRepository(Brand) private brandRepository: Repository<Brand>,
+    ) {}
 
-    findAll(): Brand[] {
-        return this.brands;
+    async findAll(limit: number, page: number): Promise<[Brand[], number]> {
+        return this.brandRepository.findAndCount({
+            order: { id: 'DESC' },
+            take: limit,
+            skip: limit * page - limit,
+        });
     }
 
-    findOne(id: number): Brand {
-        const brand: Brand = this.brands.find((c) => c.id === id);
-        if (!brand) {
-            throw new NotFoundException(`Brand with id ${id} not found`);
+    async findOne(id: string): Promise<Brand> {
+        const brand: Brand = await this.brandRepository.findOneBy({ id });
+        if (brand !== null) return brand;
+
+        throw new NotFoundException(`Brand with id ${id} not found`);
+    }
+
+    async create(payload: CreateBrandDTO): Promise<Brand> {
+        try {
+            const brand: Brand = this.brandRepository.create(payload);
+            return await this.brandRepository.save(brand);
+        } catch (e: unknown) {
+            if (e instanceof QueryFailedError)
+                QueryFailedErrorHandler.handle(e as QueryFailedError);
+            throw e;
         }
-        return brand;
     }
 
-    create(payload: CreateBrandDTO): Brand {
-        this.SEQUENCE++;
-        const brand: Brand = {
-            id: this.SEQUENCE,
-            ...payload,
-        };
-        this.brands.push(brand);
-        return brand;
-    }
-
-    update(id: number, payload: UpdateBrandDTO): Brand {
-        const brandIndex = this.brands.findIndex((c) => c.id === id);
-        if (brandIndex < 0) {
-            throw new NotFoundException(`Brand with id ${id} not found`);
+    async update(id: string, payload: UpdateBrandDTO): Promise<Brand> {
+        try {
+            const brand: Brand = await this.findOne(id);
+            await this.brandRepository.merge(brand, payload);
+            return await this.brandRepository.save(brand);
+        } catch (e: unknown) {
+            if (e instanceof QueryFailedError)
+                QueryFailedErrorHandler.handle(e as QueryFailedError);
+            throw e;
         }
-        return Object.assign(this.brands[brandIndex], payload);
     }
 
-    delete(id: number): Brand {
-        const brandIndex = this.brands.findIndex((c) => c.id === id);
-        if (brandIndex < 0) {
-            throw new NotFoundException(`Brand with id ${id} not found`);
-        }
-        return this.brands.splice(brandIndex, 1)[0];
+    async delete(id: string): Promise<Brand> {
+        const brand: Brand = await this.findOne(id);
+        const result: DeleteResult = await this.brandRepository.delete({
+            id: brand.id,
+        });
+        if (result.affected > 0) return brand;
+        throw new InternalServerErrorException(
+            `Can not delete the brand with id ${id}`,
+        );
     }
 }

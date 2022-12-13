@@ -1,51 +1,67 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, InternalServerErrorException, NotFoundException } from "@nestjs/common";
+import { DeleteResult, QueryFailedError, Repository } from "typeorm";
+import { InjectRepository } from "@nestjs/typeorm";
+
 import {
     CreateCategoryDTO,
     UpdateCategoryDTO,
 } from 'src/product/dto/category.dto';
 import { Category } from 'src/product/entity/category.entity';
 import { BaseServiceInterface } from 'src/common/interface/base-service.interface';
+import { QueryFailedErrorHandler } from "src/common/handler/query_failed_error.handler";
 
 @Injectable()
-export class CategoryService implements BaseServiceInterface<Category, number> {
-    private SEQUENCE = 0;
-    private categories: Category[] = [];
+export class CategoryService implements BaseServiceInterface<Category, string> {
+    constructor(
+        @InjectRepository(Category) private categoryRepository: Repository<Category>,
+    ) {}
 
-    findAll(): Category[] {
-        return this.categories;
+    async findAll(limit: number, page: number): Promise<[Category[], number]> {
+        return this.categoryRepository.findAndCount({
+            order: { id: 'DESC' },
+            take: limit,
+            skip: limit * page - limit,
+        });
     }
 
-    findOne(id: number): Category {
-        const category: Category = this.categories.find((c) => c.id === id);
-        if (!category) {
-            throw new NotFoundException(`Category with id ${id} not found`);
+    async findOne(id: string): Promise<Category> {
+        const category: Category = await this.categoryRepository.findOneBy({ id });
+        if (category !== null) return category;
+
+        throw new NotFoundException(`Category with id ${id} not found`);
+    }
+
+    async create(payload: CreateCategoryDTO): Promise<Category> {
+        try {
+            const category: Category = this.categoryRepository.create(payload);
+            return await this.categoryRepository.save(category);
+        } catch (e: unknown) {
+            if (e instanceof QueryFailedError)
+                QueryFailedErrorHandler.handle(e as QueryFailedError);
+            throw e;
         }
-        return category;
     }
 
-    create(payload: CreateCategoryDTO): Category {
-        this.SEQUENCE++;
-        const category: Category = {
-            id: this.SEQUENCE,
-            ...payload,
-        };
-        this.categories.push(category);
-        return category;
-    }
-
-    update(id: number, payload: UpdateCategoryDTO): Category {
-        const categoryIndex = this.categories.findIndex((c) => c.id === id);
-        if (categoryIndex < 0) {
-            throw new NotFoundException(`Category with id ${id} not found`);
+    async update(id: string, payload: UpdateCategoryDTO): Promise<Category> {
+        try {
+            const category: Category = await this.findOne(id);
+            await this.categoryRepository.merge(category, payload);
+            return await this.categoryRepository.save(category);
+        } catch (e: unknown) {
+            if (e instanceof QueryFailedError)
+                QueryFailedErrorHandler.handle(e as QueryFailedError);
+            throw e;
         }
-        return Object.assign(this.categories[categoryIndex], payload);
     }
 
-    delete(id: number): Category {
-        const categoryIndex = this.categories.findIndex((c) => c.id === id);
-        if (categoryIndex < 0) {
-            throw new NotFoundException(`Category with id ${id} not found`);
-        }
-        return this.categories.splice(categoryIndex, 1)[0];
+    async delete(id: string): Promise<Category> {
+        const category: Category = await this.findOne(id);
+        const result: DeleteResult = await this.categoryRepository.delete({
+            id: category.id,
+        });
+        if (result.affected > 0) return category;
+        throw new InternalServerErrorException(
+            `Can not delete the category with id ${id}`,
+        );
     }
 }
