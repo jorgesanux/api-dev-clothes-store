@@ -15,8 +15,9 @@ const typeOrmModule: DynamicModule = TypeOrmModule.forRootAsync({
             database: configProperties.database.postgresql.database,
             username: configProperties.database.postgresql.user,
             password: configProperties.database.postgresql.pass,
+            logging: process.env.ENVIRONMENT !== 'production',
             entities: [],
-            synchronize: true, //Not recommended for production
+            synchronize: false, //Not recommended for production
             autoLoadEntities: true,
         };
     },
