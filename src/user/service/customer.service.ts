@@ -1,51 +1,67 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, InternalServerErrorException, NotFoundException } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { DeleteResult, QueryFailedError, Repository } from "typeorm";
+
 import {
     CreateCustomerDTO,
     UpdateCustomerDTO,
 } from 'src/user/dto/customer.dto';
 import { Customer } from 'src/user/entity/customer.entity';
 import { BaseServiceInterface } from 'src/common/interface/base-service.interface';
+import { QueryFailedErrorHandler } from "src/common/handler/query_failed_error.handler";
 
 @Injectable()
-export class CustomerService implements BaseServiceInterface<Customer, number> {
-    private SEQUENCE = 0;
-    private customers: Customer[] = [];
+export class CustomerService implements BaseServiceInterface<Customer, string> {
+    constructor(
+        @InjectRepository(Customer) private customerRepository: Repository<Customer>,
+    ) {}
 
-    findAll(): Customer[] {
-        return this.customers;
+    async findAll(limit: number, page: number): Promise<[Customer[], number]> {
+        return this.customerRepository.findAndCount({
+            order: { id: 'DESC' },
+            take: limit,
+            skip: limit * page - limit,
+        });
     }
 
-    findOne(id: number): Customer {
-        const customer: Customer = this.customers.find((c) => c.id === id);
-        if (!customer) {
-            throw new NotFoundException(`Customer with id ${id} not found`);
+    async findOne(id: string): Promise<Customer> {
+        const customer: Customer = await this.customerRepository.findOneBy({ id });
+        if (customer !== null) return customer;
+
+        throw new NotFoundException(`Customer with id ${id} not found`);
+    }
+
+    async create(payload: CreateCustomerDTO): Promise<Customer> {
+        try {
+            const customer: Customer = this.customerRepository.create(payload);
+            return await this.customerRepository.save(customer);
+        } catch (e: unknown) {
+            if (e instanceof QueryFailedError)
+                QueryFailedErrorHandler.handle(e as QueryFailedError);
+            throw e;
         }
-        return customer;
     }
 
-    create(payload: CreateCustomerDTO): Customer {
-        this.SEQUENCE++;
-        const customer: Customer = {
-            id: this.SEQUENCE,
-            ...payload,
-        };
-        this.customers.push(customer);
-        return customer;
-    }
-
-    update(id: number, payload: UpdateCustomerDTO): Customer {
-        const customerIndex = this.customers.findIndex((c) => c.id === id);
-        if (customerIndex < 0) {
-            throw new NotFoundException(`Customer with id ${id} not found`);
+    async update(id: string, payload: UpdateCustomerDTO): Promise<Customer> {
+        try {
+            const customer: Customer = await this.findOne(id);
+            await this.customerRepository.merge(customer, payload);
+            return await this.customerRepository.save(customer);
+        } catch (e: unknown) {
+            if (e instanceof QueryFailedError)
+                QueryFailedErrorHandler.handle(e as QueryFailedError);
+            throw e;
         }
-        return Object.assign(this.customers[customerIndex], payload);
     }
 
-    delete(id: number): Customer {
-        const customerIndex = this.customers.findIndex((c) => c.id === id);
-        if (customerIndex < 0) {
-            throw new NotFoundException(`Customer with id ${id} not found`);
-        }
-        return this.customers.splice(customerIndex, 1)[0];
+    async delete(id: string): Promise<Customer> {
+        const customer: Customer = await this.findOne(id);
+        const result: DeleteResult = await this.customerRepository.delete({
+            id: customer.id,
+        });
+        if (result.affected > 0) return customer;
+        throw new InternalServerErrorException(
+            `Can not delete the customer with id ${id}`,
+        );
     }
 }

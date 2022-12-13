@@ -23,8 +23,8 @@ import { ApiTags } from '@nestjs/swagger';
 export class OrderController {
     constructor(
         private orderService: OrderService,
-        private customerService: CustomerService,
-        private productService: ProductService,
+        // private customerService: CustomerService,
+        // private productService: ProductService,
     ) {}
 
     @Get('/')
@@ -54,8 +54,8 @@ export class OrderController {
     create(@Body() body: CreateOrderDTO): ApiResponse<Order> {
         const order: Order = new Order();
         order.observation = body.observation;
-        order.customer = this.customerService.findOne(body.customerId);
-        order.products = this.productService.findMany(body.productsId);
+        // order.customer = this.customerService.findOne(body.customerId);
+        // order.products = this.productService.findMany(body.productsId);
 
         const response: ApiResponse<Order> = {
             message: 'Created',

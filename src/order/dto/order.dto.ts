@@ -4,21 +4,23 @@ import {
     IsEmpty,
     IsNotEmpty,
     IsNumber,
-    IsString,
-} from 'class-validator';
+    IsString, IsUUID
+} from "class-validator";
 
 export class CreateOrderDTO {
     @IsString()
     @IsEmpty()
     observation: string;
 
-    @IsNumber()
+    @IsUUID()
     @IsNotEmpty()
-    customerId: number;
+    customerId: string;
 
-    @IsArray()
+    @IsUUID(4, {
+        each: true
+    })
     @IsNotEmpty()
-    productsId: number[];
+    productsId: string[];
 }
 
 export class UpdateOrderDTO extends PartialType(CreateOrderDTO) {}

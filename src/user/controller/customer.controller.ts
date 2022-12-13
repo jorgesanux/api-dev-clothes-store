@@ -6,11 +6,13 @@ import {
     HttpCode,
     HttpStatus,
     Param,
-    ParseIntPipe,
+    ParseUUIDPipe,
     Post,
     Put,
-    Query,
-} from '@nestjs/common';
+    Query
+} from "@nestjs/common";
+import { ApiQuery, ApiTags } from "@nestjs/swagger";
+
 import {
     CreateCustomerDTO,
     UpdateCustomerDTO,
@@ -18,67 +20,82 @@ import {
 import { Customer } from 'src/user/entity/customer.entity';
 import { ApiResponse } from 'src/common/interface/api_response.interface';
 import { CustomerService } from 'src/user/service/customer.service';
-import { ApiTags } from '@nestjs/swagger';
+import { Constant } from "src/common/constant";
 
 @ApiTags('Customer')
 @Controller('customer')
 export class CustomerController {
     constructor(private customerService: CustomerService) {}
 
+    @ApiQuery({ name: 'limit', type: 'number', required: false })
+    @ApiQuery({ name: 'page', type: 'number', required: false })
     @Get('/')
     @HttpCode(HttpStatus.OK)
-    getAll(@Query('limit') limit = 10): ApiResponse<Customer> {
+    async getAll(
+        @Query('limit') limit = Constant.controllerParams.LIMIT,
+        @Query('page') page = Constant.controllerParams.PAGE,
+    ): Promise<ApiResponse<Customer>> {
+        if (limit <= 0) limit = Constant.controllerParams.LIMIT;
+        if (page <= 0) page = Constant.controllerParams.PAGE;
+
+        const [customers, count] = await this.customerService.findAll(limit, page);
+
         const response: ApiResponse<Customer> = {
             statusCode: HttpStatus.OK,
             message: 'OK',
-            results: this.customerService.findAll(),
+            results: customers,
+            count,
         };
         return response;
     }
 
     @Get('/:id')
     @HttpCode(HttpStatus.OK)
-    getById(@Param('id', ParseIntPipe) id: number): ApiResponse<Customer> {
+    async getById(
+        @Param('id', ParseUUIDPipe) id: string,
+    ): Promise<ApiResponse<Customer>> {
         const response: ApiResponse<Customer> = {
             message: 'OK',
             statusCode: HttpStatus.OK,
-            result: this.customerService.findOne(id),
+            result: await this.customerService.findOne(id),
         };
         return response;
     }
 
     @Post('/')
     @HttpCode(HttpStatus.CREATED)
-    create(@Body() body: CreateCustomerDTO): ApiResponse<Customer> {
+    async create(@Body() body: CreateCustomerDTO): Promise<ApiResponse<Customer>> {
         const response: ApiResponse<Customer> = {
             message: 'Created',
             statusCode: HttpStatus.CREATED,
-            result: this.customerService.create(body),
+            result: await this.customerService.create(body),
         };
         return response;
     }
 
     @Put('/:id')
     @HttpCode(HttpStatus.OK)
-    update(
-        @Param('id', ParseIntPipe) id: number,
+    async update(
+        @Param('id', ParseUUIDPipe) id: string,
         @Body() body: UpdateCustomerDTO,
-    ): ApiResponse<Customer> {
+    ): Promise<ApiResponse<Customer>> {
         const response: ApiResponse<Customer> = {
             message: 'Updated',
             statusCode: HttpStatus.OK,
-            result: this.customerService.update(id, body),
+            result: await this.customerService.update(id, body),
         };
         return response;
     }
 
     @Delete('/:id')
     @HttpCode(HttpStatus.OK)
-    delete(@Param('id', ParseIntPipe) id: number): ApiResponse<Customer> {
+    async delete(
+        @Param('id', ParseUUIDPipe) id: string,
+    ): Promise<ApiResponse<Customer>> {
         const response: ApiResponse<Customer> = {
             message: 'Deleted',
             statusCode: HttpStatus.OK,
-            result: this.customerService.delete(id),
+            result: await this.customerService.delete(id),
         };
         return response;
     }
