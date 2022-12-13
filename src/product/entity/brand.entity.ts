@@ -12,6 +12,6 @@ export class Brand {
     @Column({ type: 'text'})
     description: string;
 
-    @Column({ type: 'timestamptz', default: () => "CURRENT_TIMESTAMP" })
+    @Column({ name: "created_at", type: 'timestamptz', default: () => "CURRENT_TIMESTAMP" })
     created_at: Date;
 }

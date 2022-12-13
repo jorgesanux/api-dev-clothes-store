@@ -24,6 +24,6 @@ export class Customer {
     @Column({ type: 'varchar', length: 20, nullable: true })
     phone: string;
 
-    @Column({ type: 'timestamptz', default: () => "CURRENT_TIMESTAMP" })
+    @Column({ name: "created_at", type: 'timestamptz', default: () => "CURRENT_TIMESTAMP" })
     created_at: Date;
 }
