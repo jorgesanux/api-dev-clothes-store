@@ -1,16 +1,16 @@
 class ProviderKey {
     /** @deprecated **/
-    PG_CLIENT: string = "PG_CLIENT";
-    ENV_CONFIG: string = "config";
+    PG_CLIENT = 'PG_CLIENT';
+    ENV_CONFIG = 'config';
 }
 
 class DBDriverError {
-    DUPLICATE_KEY_VIOLATES_UNIQUE_CONSTRAINT: string = "23505";
+    DUPLICATE_KEY_VIOLATES_UNIQUE_CONSTRAINT = '23505';
 }
 
 class ControllerParam {
-    LIMIT: number = 10;
-    PAGE: number = 1;
+    LIMIT = 10;
+    PAGE = 1;
 }
 
 export class Constant {

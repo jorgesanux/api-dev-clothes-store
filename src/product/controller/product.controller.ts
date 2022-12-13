@@ -21,9 +21,9 @@ import {
 } from 'src/product/dto/product.dto';
 import { ProductService } from 'src/product/service/product.service';
 import { ApiResponse } from 'src/common/interface/api_response.interface';
-import { ApiTags } from "@nestjs/swagger";
+import { ApiTags } from '@nestjs/swagger';
 
-@ApiTags("Product")
+@ApiTags('Product')
 @Controller('product')
 export class ProductController {
     constructor(private productService: ProductService) {}

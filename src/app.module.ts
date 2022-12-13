@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule } from "@nestjs/config";
-import * as Joi from "joi";
+import { ConfigModule } from '@nestjs/config';
+import * as Joi from 'joi';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -8,12 +8,12 @@ import { UserModule } from './user/user.module';
 import { ProductModule } from './product/product.module';
 import { OrderModule } from './order/order.module';
 import { DatabaseModule } from './database/database.module';
-import config from "./config";
+import config from './config';
 
 @Module({
     imports: [
         ConfigModule.forRoot({
-            envFilePath: ".env",
+            envFilePath: '.env',
             load: [config],
             isGlobal: true,
             //TODO: Validate how to do this schema validation with class-validator
@@ -29,7 +29,7 @@ import config from "./config";
         UserModule,
         ProductModule,
         OrderModule,
-        DatabaseModule
+        DatabaseModule,
     ],
     controllers: [AppController],
     providers: [AppService],

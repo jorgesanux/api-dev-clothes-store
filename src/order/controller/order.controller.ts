@@ -16,9 +16,9 @@ import { CustomerService } from 'src/user/service/customer.service';
 import { CreateOrderDTO, UpdateOrderDTO } from '../dto/order.dto';
 import { Order } from '../entity/order.entity';
 import { OrderService } from '../service/order.service';
-import { ApiTags } from "@nestjs/swagger";
+import { ApiTags } from '@nestjs/swagger';
 
-@ApiTags("Order")
+@ApiTags('Order')
 @Controller('order')
 export class OrderController {
     constructor(

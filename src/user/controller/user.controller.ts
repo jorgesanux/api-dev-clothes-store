@@ -1,5 +1,5 @@
 import {
-    Body, ConflictException,
+    Body,
     Controller,
     Delete,
     Get,
@@ -9,34 +9,31 @@ import {
     ParseIntPipe,
     Post,
     Put,
-    Query, UnprocessableEntityException
-} from "@nestjs/common";
-import { ApiQuery, ApiTags } from "@nestjs/swagger";
+    Query,
+} from '@nestjs/common';
+import { ApiQuery, ApiTags } from '@nestjs/swagger';
 
 import { CreateUserDTO, UpdateUserDTO } from 'src/user/dto/user.dto';
 import { User } from 'src/user/entity/user.entity';
 import { ApiResponse } from 'src/common/interface/api_response.interface';
 import { UserService } from 'src/user/service/user.service';
-import { QueryFailedError } from "typeorm";
-import { Constant } from "../../common/constant";
+import { Constant } from '../../common/constant';
 
-@ApiTags("User")
+@ApiTags('User')
 @Controller('user')
 export class UserController {
-    constructor(
-        private userService: UserService,
-    ) {}
+    constructor(private userService: UserService) {}
 
-    @ApiQuery({ name: "limit", type: "number", required: false })
-    @ApiQuery({ name: "page", type: "number", required: false })
+    @ApiQuery({ name: 'limit', type: 'number', required: false })
+    @ApiQuery({ name: 'page', type: 'number', required: false })
     @Get('/')
     @HttpCode(HttpStatus.OK)
     async getAll(
         @Query('limit') limit = Constant.controllerParams.LIMIT,
         @Query('page') page = Constant.controllerParams.PAGE,
     ): Promise<ApiResponse<User>> {
-        if( limit <= 0 ) limit = Constant.controllerParams.LIMIT;
-        if( page <= 0 ) page = Constant.controllerParams.PAGE;
+        if (limit <= 0) limit = Constant.controllerParams.LIMIT;
+        if (page <= 0) page = Constant.controllerParams.PAGE;
 
         const [users, count] = await this.userService.findAll(limit, page);
 
@@ -44,14 +41,16 @@ export class UserController {
             statusCode: HttpStatus.OK,
             message: 'OK',
             results: users,
-            count
+            count,
         };
         return response;
     }
 
     @Get('/:id')
     @HttpCode(HttpStatus.OK)
-    async getById(@Param('id', ParseIntPipe) id: number): Promise<ApiResponse<User>> {
+    async getById(
+        @Param('id', ParseIntPipe) id: number,
+    ): Promise<ApiResponse<User>> {
         const response: ApiResponse<User> = {
             message: 'OK',
             statusCode: HttpStatus.OK,
@@ -87,7 +86,9 @@ export class UserController {
 
     @Delete('/:id')
     @HttpCode(HttpStatus.OK)
-    async delete(@Param('id', ParseIntPipe) id: number): Promise<ApiResponse<User>> {
+    async delete(
+        @Param('id', ParseIntPipe) id: number,
+    ): Promise<ApiResponse<User>> {
         const response: ApiResponse<User> = {
             message: 'Deleted',
             statusCode: HttpStatus.OK,

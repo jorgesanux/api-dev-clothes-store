@@ -18,9 +18,9 @@ import {
 import { Customer } from 'src/user/entity/customer.entity';
 import { ApiResponse } from 'src/common/interface/api_response.interface';
 import { CustomerService } from 'src/user/service/customer.service';
-import { ApiTags } from "@nestjs/swagger";
+import { ApiTags } from '@nestjs/swagger';
 
-@ApiTags("Customer")
+@ApiTags('Customer')
 @Controller('customer')
 export class CustomerController {
     constructor(private customerService: CustomerService) {}

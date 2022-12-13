@@ -1,6 +1,6 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
-@Entity("product")
+@Entity('product')
 export class Product {
     @PrimaryGeneratedColumn()
     id: number;
@@ -8,15 +8,15 @@ export class Product {
     @Column({ type: 'varchar', length: 100 })
     name: string;
 
-    @Column({ type: 'text'})
+    @Column({ type: 'text' })
     description: string;
 
-    @Column({ type: 'float'})
+    @Column({ type: 'float' })
     price: number;
 
-    @Column({ type: 'float'})
+    @Column({ type: 'float' })
     stock: number;
 
-    @Column({ type: 'text'})
+    @Column({ type: 'text' })
     image: string;
 }
