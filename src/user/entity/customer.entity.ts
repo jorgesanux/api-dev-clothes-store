@@ -1,5 +1,6 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, OneToOne } from "typeorm";
 import { BaseEntity } from "../../common/entity/base.entity";
+import { User } from "./user.entity";
 
 @Entity('customer')
 export class Customer extends BaseEntity {
@@ -12,12 +13,13 @@ export class Customer extends BaseEntity {
     @Column({ name: "company_name", type: 'varchar', length: 100, nullable: true })
     companyName: string;
 
-    @Column({ type: 'varchar', length: 50, unique: true })
-    email: string;
-
     @Column({ type: 'text' })
     address: string;
 
     @Column({ type: 'varchar', length: 20, nullable: true })
     phone: string;
+
+    @OneToOne(() => User, (user) => user.customer, { nullable: false })
+    @JoinColumn({ name: "user_id" })
+    user: User;
 }

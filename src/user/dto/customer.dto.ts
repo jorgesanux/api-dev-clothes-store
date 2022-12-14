@@ -1,5 +1,5 @@
 import { PartialType } from '@nestjs/swagger';
-import { IsEmail, IsNotEmpty, IsString } from "class-validator";
+import { IsNotEmpty, IsString, IsUUID } from "class-validator";
 
 export class CreateCustomerDTO {
     @IsString()
@@ -13,10 +13,6 @@ export class CreateCustomerDTO {
     @IsString()
     companyName: string;
 
-    @IsEmail()
-    @IsNotEmpty()
-    email: string;
-
     @IsString()
     @IsNotEmpty()
     address: string;
@@ -24,6 +20,11 @@ export class CreateCustomerDTO {
     @IsString()
     @IsNotEmpty()
     phone: string;
+
+
+    @IsUUID("4")
+    @IsNotEmpty()
+    user_id: string;
 }
 
 export class UpdateCustomerDTO extends PartialType(CreateCustomerDTO) {}
