@@ -1,11 +1,8 @@
 import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { BaseEntity } from "../../common/entity/base.entity";
 
 @Entity('customer')
-export class Customer {
-
-    @PrimaryGeneratedColumn("uuid")
-    id: string;
-
+export class Customer extends BaseEntity {
     @Column({ type: 'varchar', length: 30, nullable: true })
     name: string;
 
@@ -23,7 +20,4 @@ export class Customer {
 
     @Column({ type: 'varchar', length: 20, nullable: true })
     phone: string;
-
-    @Column({ name: "created_at", type: 'timestamptz', default: () => "CURRENT_TIMESTAMP" })
-    created_at: Date;
 }
