@@ -12,5 +12,5 @@ export class Brand extends BaseEntity {
     description: string;
 
     @OneToMany( () => Product, (product) => product.brand )
-    product: Product;
+    products: Product[];
 }

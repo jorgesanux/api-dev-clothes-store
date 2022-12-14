@@ -19,7 +19,7 @@ export class Product extends BaseEntity {
     @Column({ type: 'text' })
     image: string;
 
-    @ManyToOne(() => Brand, (brand) => brand.product, { nullable: false })
+    @ManyToOne(() => Brand, (brand) => brand.products, { nullable: false })
     @JoinColumn({ name: "brand_id" })
     brand: Brand;
 }
