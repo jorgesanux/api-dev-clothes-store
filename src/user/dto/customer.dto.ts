@@ -24,7 +24,7 @@ export class CreateCustomerDTO {
 
     @IsUUID("4")
     @IsNotEmpty()
-    user_id: string;
+    userId: string;
 }
 
 export class UpdateCustomerDTO extends PartialType(CreateCustomerDTO) {}

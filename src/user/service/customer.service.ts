@@ -45,7 +45,7 @@ export class CustomerService implements BaseServiceInterface<Customer, string> {
         try {
             const customer: Customer = this.customerRepository.create(payload);
             customer.user = await this.userRepository.findOneBy({
-                id: payload.user_id
+                id: payload.userId
             });
             return await this.customerRepository.save(customer);
         } catch (e: unknown) {

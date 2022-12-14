@@ -4,8 +4,8 @@ import {
     IsNumber,
     IsUrl,
     IsNotEmpty,
-    IsPositive,
-} from 'class-validator';
+    IsPositive, IsUUID
+} from "class-validator";
 
 export class CreateProductDTO {
     @IsString()
@@ -29,6 +29,10 @@ export class CreateProductDTO {
     @IsUrl()
     @IsNotEmpty()
     readonly image: string;
+
+    @IsUUID("4")
+    @IsNotEmpty()
+    brandId: string;
 }
 
 export class UpdateProductDTO extends PartialType(CreateProductDTO) {}

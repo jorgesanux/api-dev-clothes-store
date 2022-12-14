@@ -9,24 +9,35 @@ import {
 import { Product } from 'src/product/entity/product.entity';
 import { BaseServiceInterface } from 'src/common/interface/base-service.interface';
 import { QueryFailedErrorHandler } from "src/common/handler/query_failed_error.handler";
+import { Brand } from "../entity/brand.entity";
 
 
 @Injectable()
 export class ProductService implements BaseServiceInterface<Product, string> {
+
+    relations: string[] = ["brand"];
+
     constructor(
         @InjectRepository(Product) private productRepository: Repository<Product>,
+        @InjectRepository(Brand) private brandRepository: Repository<Brand>,
     ) {}
 
-    async findAll(limit: number, page: number): Promise<[Product[], number]> {
+    async findAll(limit: number, page: number, relations = this.relations): Promise<[Product[], number]> {
         return this.productRepository.findAndCount({
+            relations,
             order: { id: 'DESC' },
             take: limit,
             skip: limit * page - limit,
         });
     }
 
-    async findOne(id: string): Promise<Product> {
-        const product: Product = await this.productRepository.findOneBy({ id });
+    async findOne(id: string, relations = this.relations): Promise<Product> {
+        const product: Product = await this.productRepository.findOne({
+            relations,
+            where: {
+                id
+            }
+        });
         if (product !== null) return product;
 
         throw new NotFoundException(`Product with id ${id} not found`);
@@ -35,6 +46,9 @@ export class ProductService implements BaseServiceInterface<Product, string> {
     async create(payload: CreateProductDTO): Promise<Product> {
         try {
             const product: Product = this.productRepository.create(payload);
+            product.brand = await this.brandRepository.findOneBy({
+                id: payload.brandId
+            })
             return await this.productRepository.save(product);
         } catch (e: unknown) {
             if (e instanceof QueryFailedError)

@@ -1,5 +1,6 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne } from "typeorm";
 import { BaseEntity } from "../../common/entity/base.entity";
+import { Brand } from "./brand.entity";
 
 @Entity('product')
 export class Product extends BaseEntity {
@@ -17,4 +18,8 @@ export class Product extends BaseEntity {
 
     @Column({ type: 'text' })
     image: string;
+
+    @ManyToOne(() => Brand, (brand) => brand.product, { nullable: false })
+    @JoinColumn({ name: "brand_id" })
+    brand: Brand;
 }
