@@ -15,7 +15,7 @@ import { BrandService } from "./brand.service";
 @Injectable()
 export class ProductService implements BaseServiceInterface<Product, string> {
 
-    relations: string[] = ["brand"];
+    relations: string[] = ["brand", "categories"];
 
     constructor(
         @InjectRepository(Product) private productRepository: Repository<Product>,
