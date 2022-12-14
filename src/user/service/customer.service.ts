@@ -1,4 +1,4 @@
-import { Injectable, InternalServerErrorException, NotFoundException } from "@nestjs/common";
+import { Inject, Injectable, InternalServerErrorException, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { DeleteResult, QueryFailedError, Repository } from "typeorm";
 
@@ -9,13 +9,13 @@ import {
 import { Customer } from 'src/user/entity/customer.entity';
 import { BaseServiceInterface } from 'src/common/interface/base-service.interface';
 import { QueryFailedErrorHandler } from "src/common/handler/query_failed_error.handler";
-import { User } from "../entity/user.entity";
+import { UserService } from "./user.service";
 
 @Injectable()
 export class CustomerService implements BaseServiceInterface<Customer, string> {
     constructor(
         @InjectRepository(Customer) private customerRepository: Repository<Customer>,
-        @InjectRepository(User) private userRepository: Repository<User>,
+        private userService: UserService,
     ) {}
 
     relations: string[] = ["user"];
@@ -44,9 +44,7 @@ export class CustomerService implements BaseServiceInterface<Customer, string> {
     async create(payload: CreateCustomerDTO): Promise<Customer> {
         try {
             const customer: Customer = this.customerRepository.create(payload);
-            customer.user = await this.userRepository.findOneBy({
-                id: payload.userId
-            });
+            customer.user = await this.userService.findOne(payload.userId);
             return await this.customerRepository.save(customer);
         } catch (e: unknown) {
             if (e instanceof QueryFailedError)
@@ -58,6 +56,7 @@ export class CustomerService implements BaseServiceInterface<Customer, string> {
     async update(id: string, payload: UpdateCustomerDTO): Promise<Customer> {
         try {
             const customer: Customer = await this.findOne(id);
+            if(payload.userId) customer.user = await this.userService.findOne(payload.userId);
             await this.customerRepository.merge(customer, payload);
             return await this.customerRepository.save(customer);
         } catch (e: unknown) {
