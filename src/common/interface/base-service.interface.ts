@@ -6,7 +6,7 @@ export interface BaseServiceInterface<T = any, Y = any> {
     findAll(
         limit: number,
         page: number,
-        relations?: string[]
+        relations?: string[],
     ): T[] | Promise<T[]> | Promise<[T[], number]>;
     findOne(id: Y, relations?: string[]): T | Promise<T>;
     create(payload: any): T | Promise<T>;

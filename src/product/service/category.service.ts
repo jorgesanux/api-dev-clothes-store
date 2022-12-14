@@ -1,6 +1,10 @@
-import { Injectable, InternalServerErrorException, NotFoundException } from "@nestjs/common";
-import { DeleteResult, QueryFailedError, Repository } from "typeorm";
-import { InjectRepository } from "@nestjs/typeorm";
+import {
+    Injectable,
+    InternalServerErrorException,
+    NotFoundException,
+} from '@nestjs/common';
+import { DeleteResult, QueryFailedError, Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
 
 import {
     CreateCategoryDTO,
@@ -8,12 +12,13 @@ import {
 } from 'src/product/dto/category.dto';
 import { Category } from 'src/product/entity/category.entity';
 import { BaseServiceInterface } from 'src/common/interface/base-service.interface';
-import { QueryFailedErrorHandler } from "src/common/handler/query_failed_error.handler";
+import { QueryFailedErrorHandler } from 'src/common/handler/query_failed_error.handler';
 
 @Injectable()
 export class CategoryService implements BaseServiceInterface<Category, string> {
     constructor(
-        @InjectRepository(Category) private categoryRepository: Repository<Category>,
+        @InjectRepository(Category)
+        private categoryRepository: Repository<Category>,
     ) {}
 
     async findAll(limit: number, page: number): Promise<[Category[], number]> {
@@ -25,7 +30,9 @@ export class CategoryService implements BaseServiceInterface<Category, string> {
     }
 
     async findOne(id: string): Promise<Category> {
-        const category: Category = await this.categoryRepository.findOneBy({ id });
+        const category: Category = await this.categoryRepository.findOneBy({
+            id,
+        });
         if (category !== null) return category;
 
         throw new NotFoundException(`Category with id ${id} not found`);

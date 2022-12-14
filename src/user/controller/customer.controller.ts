@@ -9,9 +9,9 @@ import {
     ParseUUIDPipe,
     Post,
     Put,
-    Query
-} from "@nestjs/common";
-import { ApiQuery, ApiTags } from "@nestjs/swagger";
+    Query,
+} from '@nestjs/common';
+import { ApiQuery, ApiTags } from '@nestjs/swagger';
 
 import {
     CreateCustomerDTO,
@@ -20,7 +20,7 @@ import {
 import { Customer } from 'src/user/entity/customer.entity';
 import { ApiResponse } from 'src/common/interface/api_response.interface';
 import { CustomerService } from 'src/user/service/customer.service';
-import { Constant } from "src/common/constant";
+import { Constant } from 'src/common/constant';
 
 @ApiTags('Customer')
 @Controller('customer')
@@ -38,7 +38,10 @@ export class CustomerController {
         if (limit <= 0) limit = Constant.controllerParams.LIMIT;
         if (page <= 0) page = Constant.controllerParams.PAGE;
 
-        const [customers, count] = await this.customerService.findAll(limit, page);
+        const [customers, count] = await this.customerService.findAll(
+            limit,
+            page,
+        );
 
         const response: ApiResponse<Customer> = {
             statusCode: HttpStatus.OK,
@@ -64,7 +67,9 @@ export class CustomerController {
 
     @Post('/')
     @HttpCode(HttpStatus.CREATED)
-    async create(@Body() body: CreateCustomerDTO): Promise<ApiResponse<Customer>> {
+    async create(
+        @Body() body: CreateCustomerDTO,
+    ): Promise<ApiResponse<Customer>> {
         const response: ApiResponse<Customer> = {
             message: 'Created',
             statusCode: HttpStatus.CREATED,

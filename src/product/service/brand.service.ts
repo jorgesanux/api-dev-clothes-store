@@ -1,11 +1,15 @@
-import { Injectable, InternalServerErrorException, NotFoundException } from "@nestjs/common";
-import { InjectRepository } from "@nestjs/typeorm";
-import { DeleteResult, QueryFailedError, Repository } from "typeorm";
+import {
+    Injectable,
+    InternalServerErrorException,
+    NotFoundException,
+} from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { DeleteResult, QueryFailedError, Repository } from 'typeorm';
 
 import { CreateBrandDTO, UpdateBrandDTO } from 'src/product/dto/brand.dto';
 import { Brand } from 'src/product/entity/brand.entity';
 import { BaseServiceInterface } from 'src/common/interface/base-service.interface';
-import { QueryFailedErrorHandler } from "src/common/handler/query_failed_error.handler";
+import { QueryFailedErrorHandler } from 'src/common/handler/query_failed_error.handler';
 
 @Injectable()
 export class BrandService implements BaseServiceInterface<Brand, string> {

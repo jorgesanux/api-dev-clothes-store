@@ -9,8 +9,8 @@ import {
     ParseUUIDPipe,
     Post,
     Put,
-    Query
-} from "@nestjs/common";
+    Query,
+} from '@nestjs/common';
 import { ApiQuery, ApiTags } from '@nestjs/swagger';
 
 import { CreateUserDTO, UpdateUserDTO } from 'src/user/dto/user.dto';

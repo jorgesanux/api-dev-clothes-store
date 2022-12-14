@@ -4,8 +4,9 @@ import {
     IsEmpty,
     IsNotEmpty,
     IsNumber,
-    IsString, IsUUID
-} from "class-validator";
+    IsString,
+    IsUUID,
+} from 'class-validator';
 
 export class CreateOrderDTO {
     @IsString()
@@ -17,7 +18,7 @@ export class CreateOrderDTO {
     customerId: string;
 
     @IsUUID(4, {
-        each: true
+        each: true,
     })
     @IsNotEmpty()
     productsId: string[];

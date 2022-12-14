@@ -6,12 +6,13 @@ import {
     HttpCode,
     HttpStatus,
     Param,
-    ParseIntPipe, ParseUUIDPipe,
+    ParseIntPipe,
+    ParseUUIDPipe,
     Post,
     Put,
-    Query
-} from "@nestjs/common";
-import { ApiQuery, ApiTags } from "@nestjs/swagger";
+    Query,
+} from '@nestjs/common';
+import { ApiQuery, ApiTags } from '@nestjs/swagger';
 
 import { ApiResponse } from 'src/common/interface/api_response.interface';
 import { Category } from 'src/product/entity/category.entity';
@@ -20,7 +21,7 @@ import {
     CreateCategoryDTO,
     UpdateCategoryDTO,
 } from 'src/product/dto/category.dto';
-import { Constant } from "src/common/constant";
+import { Constant } from 'src/common/constant';
 
 @ApiTags('Category')
 @Controller('category')
@@ -38,7 +39,10 @@ export class CategoryController {
         if (limit <= 0) limit = Constant.controllerParams.LIMIT;
         if (page <= 0) page = Constant.controllerParams.PAGE;
 
-        const [categorys, count] = await this.categoryService.findAll(limit, page);
+        const [categorys, count] = await this.categoryService.findAll(
+            limit,
+            page,
+        );
 
         const response: ApiResponse<Category> = {
             statusCode: HttpStatus.OK,
@@ -64,7 +68,9 @@ export class CategoryController {
 
     @Post('/')
     @HttpCode(HttpStatus.CREATED)
-    async create(@Body() body: CreateCategoryDTO): Promise<ApiResponse<Category>> {
+    async create(
+        @Body() body: CreateCategoryDTO,
+    ): Promise<ApiResponse<Category>> {
         const response: ApiResponse<Category> = {
             message: 'Created',
             statusCode: HttpStatus.CREATED,

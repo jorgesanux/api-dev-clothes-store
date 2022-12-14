@@ -6,18 +6,19 @@ import {
     HttpCode,
     HttpStatus,
     Param,
-    ParseIntPipe, ParseUUIDPipe,
+    ParseIntPipe,
+    ParseUUIDPipe,
     Post,
     Put,
-    Query
-} from "@nestjs/common";
-import { ApiQuery, ApiTags } from "@nestjs/swagger";
+    Query,
+} from '@nestjs/common';
+import { ApiQuery, ApiTags } from '@nestjs/swagger';
 
 import { CreateBrandDTO, UpdateBrandDTO } from 'src/product/dto/brand.dto';
 import { Brand } from 'src/product/entity/brand.entity';
 import { ApiResponse } from 'src/common/interface/api_response.interface';
 import { BrandService } from 'src/product/service/brand.service';
-import { Constant } from "src/common/constant";
+import { Constant } from 'src/common/constant';
 
 @ApiTags('Brand')
 @Controller('brand')

@@ -1,6 +1,6 @@
-import { Column, Entity, OneToOne, PrimaryGeneratedColumn } from "typeorm";
-import { BaseEntity } from "../../common/entity/base.entity";
-import { Customer } from "./customer.entity";
+import { Column, Entity, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { BaseEntity } from '../../common/entity/base.entity';
+import { Customer } from './customer.entity';
 
 @Entity('users')
 export class User extends BaseEntity {

@@ -5,12 +5,13 @@ import {
     Get,
     HttpCode,
     HttpStatus,
-    Param, ParseUUIDPipe,
+    Param,
+    ParseUUIDPipe,
     Post,
     Put,
-    Query
-} from "@nestjs/common";
-import { ApiQuery, ApiTags } from "@nestjs/swagger";
+    Query,
+} from '@nestjs/common';
+import { ApiQuery, ApiTags } from '@nestjs/swagger';
 
 import { Product } from 'src/product/entity/product.entity';
 import {
@@ -19,7 +20,7 @@ import {
 } from 'src/product/dto/product.dto';
 import { ProductService } from 'src/product/service/product.service';
 import { ApiResponse } from 'src/common/interface/api_response.interface';
-import { Constant } from "src/common/constant";
+import { Constant } from 'src/common/constant';
 
 @ApiTags('Product')
 @Controller('product')
@@ -37,7 +38,10 @@ export class ProductController {
         if (limit <= 0) limit = Constant.controllerParams.LIMIT;
         if (page <= 0) page = Constant.controllerParams.PAGE;
 
-        const [products, count] = await this.productService.findAll(limit, page);
+        const [products, count] = await this.productService.findAll(
+            limit,
+            page,
+        );
 
         const response: ApiResponse<Product> = {
             statusCode: HttpStatus.OK,
@@ -63,7 +67,9 @@ export class ProductController {
 
     @Post('/')
     @HttpCode(HttpStatus.CREATED)
-    async create(@Body() body: CreateProductDTO): Promise<ApiResponse<Product>> {
+    async create(
+        @Body() body: CreateProductDTO,
+    ): Promise<ApiResponse<Product>> {
         const response: ApiResponse<Product> = {
             message: 'Created',
             statusCode: HttpStatus.CREATED,

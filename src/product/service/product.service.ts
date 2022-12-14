@@ -1,6 +1,10 @@
-import { Injectable, InternalServerErrorException, NotFoundException } from "@nestjs/common";
-import { DeleteResult, QueryFailedError, Repository } from "typeorm";
-import { InjectRepository } from "@nestjs/typeorm";
+import {
+    Injectable,
+    InternalServerErrorException,
+    NotFoundException,
+} from '@nestjs/common';
+import { DeleteResult, QueryFailedError, Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
 
 import {
     CreateProductDTO,
@@ -8,21 +12,24 @@ import {
 } from 'src/product/dto/product.dto';
 import { Product } from 'src/product/entity/product.entity';
 import { BaseServiceInterface } from 'src/common/interface/base-service.interface';
-import { QueryFailedErrorHandler } from "src/common/handler/query_failed_error.handler";
-import { BrandService } from "./brand.service";
-
+import { QueryFailedErrorHandler } from 'src/common/handler/query_failed_error.handler';
+import { BrandService } from './brand.service';
 
 @Injectable()
 export class ProductService implements BaseServiceInterface<Product, string> {
-
-    relations: string[] = ["brand", "categories"];
+    relations: string[] = ['brand', 'categories'];
 
     constructor(
-        @InjectRepository(Product) private productRepository: Repository<Product>,
+        @InjectRepository(Product)
+        private productRepository: Repository<Product>,
         private brandService: BrandService,
     ) {}
 
-    async findAll(limit: number, page: number, relations = this.relations): Promise<[Product[], number]> {
+    async findAll(
+        limit: number,
+        page: number,
+        relations = this.relations,
+    ): Promise<[Product[], number]> {
         return this.productRepository.findAndCount({
             relations,
             order: { id: 'DESC' },
@@ -35,8 +42,8 @@ export class ProductService implements BaseServiceInterface<Product, string> {
         const product: Product = await this.productRepository.findOne({
             relations,
             where: {
-                id
-            }
+                id,
+            },
         });
         if (product !== null) return product;
 
@@ -58,7 +65,10 @@ export class ProductService implements BaseServiceInterface<Product, string> {
     async update(id: string, payload: UpdateProductDTO): Promise<Product> {
         try {
             const product: Product = await this.findOne(id);
-            if(payload.brandId) product.brand = await this.brandService.findOne(payload.brandId);
+            if (payload.brandId)
+                product.brand = await this.brandService.findOne(
+                    payload.brandId,
+                );
             await this.productRepository.merge(product, payload);
             return await this.productRepository.save(product);
         } catch (e: unknown) {

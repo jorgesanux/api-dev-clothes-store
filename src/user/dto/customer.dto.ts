@@ -1,5 +1,5 @@
 import { PartialType } from '@nestjs/swagger';
-import { IsNotEmpty, IsString, IsUUID } from "class-validator";
+import { IsNotEmpty, IsString, IsUUID } from 'class-validator';
 
 export class CreateCustomerDTO {
     @IsString()
@@ -21,8 +21,7 @@ export class CreateCustomerDTO {
     @IsNotEmpty()
     phone: string;
 
-
-    @IsUUID("4")
+    @IsUUID('4')
     @IsNotEmpty()
     userId: string;
 }

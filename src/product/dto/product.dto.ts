@@ -4,8 +4,9 @@ import {
     IsNumber,
     IsUrl,
     IsNotEmpty,
-    IsPositive, IsUUID
-} from "class-validator";
+    IsPositive,
+    IsUUID,
+} from 'class-validator';
 
 export class CreateProductDTO {
     @IsString()
@@ -30,7 +31,7 @@ export class CreateProductDTO {
     @IsNotEmpty()
     readonly image: string;
 
-    @IsUUID("4")
+    @IsUUID('4')
     @IsNotEmpty()
     brandId: string;
 }
