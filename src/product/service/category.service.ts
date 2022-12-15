@@ -3,7 +3,7 @@ import {
     InternalServerErrorException,
     NotFoundException,
 } from '@nestjs/common';
-import { DeleteResult, QueryFailedError, Repository } from 'typeorm';
+import { DeleteResult, In, QueryFailedError, Repository } from "typeorm";
 import { InjectRepository } from '@nestjs/typeorm';
 
 import {
@@ -36,6 +36,17 @@ export class CategoryService implements BaseServiceInterface<Category, string> {
         if (category !== null) return category;
 
         throw new NotFoundException(`Category with id ${id} not found`);
+    }
+
+    async findMany(ids: string[]): Promise<Category[]> {
+        const categories: Category[] = await this.categoryRepository.findBy({
+            id: In(ids)
+        });
+        for(let id of ids){
+            if(categories.findIndex( c => c.id === id) === -1)
+                throw new NotFoundException(`Category with id ${id} not found`);
+        }
+        return categories;
     }
 
     async create(payload: CreateCategoryDTO): Promise<Category> {

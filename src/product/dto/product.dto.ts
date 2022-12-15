@@ -5,8 +5,8 @@ import {
     IsUrl,
     IsNotEmpty,
     IsPositive,
-    IsUUID,
-} from 'class-validator';
+    IsUUID, IsArray, ArrayNotEmpty
+} from "class-validator";
 
 export class CreateProductDTO {
     @IsString()
@@ -34,6 +34,11 @@ export class CreateProductDTO {
     @IsUUID('4')
     @IsNotEmpty()
     brandId: string;
+
+    @IsArray()
+    @ArrayNotEmpty()
+    @IsUUID('4', { each: true })
+    categoriesIds: string[];
 }
 
 export class UpdateProductDTO extends PartialType(CreateProductDTO) {}

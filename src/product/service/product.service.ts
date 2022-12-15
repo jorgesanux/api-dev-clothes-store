@@ -14,6 +14,7 @@ import { Product } from 'src/product/entity/product.entity';
 import { BaseServiceInterface } from 'src/common/interface/base-service.interface';
 import { QueryFailedErrorHandler } from 'src/common/handler/query_failed_error.handler';
 import { BrandService } from './brand.service';
+import { CategoryService } from "./category.service";
 
 @Injectable()
 export class ProductService implements BaseServiceInterface<Product, string> {
@@ -23,6 +24,7 @@ export class ProductService implements BaseServiceInterface<Product, string> {
         @InjectRepository(Product)
         private productRepository: Repository<Product>,
         private brandService: BrandService,
+        private categoryService: CategoryService,
     ) {}
 
     async findAll(
@@ -54,6 +56,7 @@ export class ProductService implements BaseServiceInterface<Product, string> {
         try {
             const product: Product = this.productRepository.create(payload);
             product.brand = await this.brandService.findOne(payload.brandId);
+            product.categories = await this.categoryService.findMany(payload.categoriesIds);
             return await this.productRepository.save(product);
         } catch (e: unknown) {
             if (e instanceof QueryFailedError)
@@ -65,10 +68,15 @@ export class ProductService implements BaseServiceInterface<Product, string> {
     async update(id: string, payload: UpdateProductDTO): Promise<Product> {
         try {
             const product: Product = await this.findOne(id);
+
             if (payload.brandId)
                 product.brand = await this.brandService.findOne(
                     payload.brandId,
                 );
+
+            if(payload.categoriesIds)
+                product.categories = await this.categoryService.findMany(payload.categoriesIds);
+
             await this.productRepository.merge(product, payload);
             return await this.productRepository.save(product);
         } catch (e: unknown) {
