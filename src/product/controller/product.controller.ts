@@ -6,11 +6,11 @@ import {
     HttpCode,
     HttpStatus,
     Param,
-    ParseUUIDPipe,
+    ParseUUIDPipe, Patch,
     Post,
     Put,
-    Query,
-} from '@nestjs/common';
+    Query
+} from "@nestjs/common";
 import { ApiQuery, ApiTags } from '@nestjs/swagger';
 
 import { Product } from 'src/product/entity/product.entity';
@@ -78,7 +78,7 @@ export class ProductController {
         return response;
     }
 
-    @Put('/:id')
+    @Patch('/:id')
     @HttpCode(HttpStatus.OK)
     async update(
         @Param('id', ParseUUIDPipe) id: string,
@@ -101,6 +101,36 @@ export class ProductController {
             message: 'Deleted',
             statusCode: HttpStatus.OK,
             result: await this.productService.delete(id),
+        };
+        return response;
+    }
+
+    /***** Operations on Category array relation *****/
+
+    @Patch('/:idProduct/category/:idCategory')
+    @HttpCode(HttpStatus.OK)
+    async addCategory(
+        @Param('idProduct', ParseUUIDPipe) idProduct: string,
+        @Param('idCategory', ParseUUIDPipe) idCategory: string,
+    ): Promise<ApiResponse<Product>> {
+        const response: ApiResponse<Product> = {
+            message: 'Updated',
+            statusCode: HttpStatus.OK,
+            result: await this.productService.addCategory(idProduct, idCategory),
+        };
+        return response;
+    }
+
+    @Delete('/:idProduct/category/:idCategory')
+    @HttpCode(HttpStatus.OK)
+    async deleteCategory(
+        @Param('idProduct', ParseUUIDPipe) idProduct: string,
+        @Param('idCategory', ParseUUIDPipe) idCategory: string,
+    ): Promise<ApiResponse<Product>> {
+        const response: ApiResponse<Product> = {
+            message: 'Deleted',
+            statusCode: HttpStatus.OK,
+            result: await this.productService.deleteCategory(idProduct, idCategory),
         };
         return response;
     }

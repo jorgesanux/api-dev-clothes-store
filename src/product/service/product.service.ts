@@ -1,8 +1,9 @@
 import {
+    ConflictException,
     Injectable,
     InternalServerErrorException,
-    NotFoundException,
-} from '@nestjs/common';
+    NotFoundException
+} from "@nestjs/common";
 import { DeleteResult, QueryFailedError, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 
@@ -15,6 +16,7 @@ import { BaseServiceInterface } from 'src/common/interface/base-service.interfac
 import { QueryFailedErrorHandler } from 'src/common/handler/query_failed_error.handler';
 import { BrandService } from './brand.service';
 import { CategoryService } from "./category.service";
+import { Category } from "../entity/category.entity";
 
 @Injectable()
 export class ProductService implements BaseServiceInterface<Product, string> {
@@ -86,6 +88,16 @@ export class ProductService implements BaseServiceInterface<Product, string> {
         }
     }
 
+    async addCategory(idProduct: string, idCategory: string): Promise<Product> {
+        const product: Product = await this.findOne(idProduct);
+
+        if(product.categories.findIndex( c => c.id === idCategory) !== -1)
+            throw new ConflictException(`Category with id ${idCategory} already exists as relation on Product with id ${idProduct}`);
+
+        product.categories.push(await this.categoryService.findOne(idCategory));
+        return this.productRepository.save(product);
+    }
+
     async delete(id: string): Promise<Product> {
         const product: Product = await this.findOne(id);
         const result: DeleteResult = await this.productRepository.delete({
@@ -95,5 +107,19 @@ export class ProductService implements BaseServiceInterface<Product, string> {
         throw new InternalServerErrorException(
             `Can not delete the product with id ${id}`,
         );
+    }
+
+    async deleteCategory(idProduct: string, idCategory: string): Promise<Product> {
+        const product: Product = await this.findOne(idProduct);
+        const indexCategory: number = product.categories.findIndex( c => c.id === idCategory);
+
+        if(indexCategory === -1)
+            throw new NotFoundException(`Category with id ${idCategory} not found as relation on Product with id ${idProduct}`);
+
+        if(product.categories.length === 1)
+            throw new ConflictException(`Product with id ${idProduct} must have at least one category. Cannot delete the only category.`);
+
+        product.categories.splice(indexCategory, 1);
+        return this.productRepository.save(product);
     }
 }
