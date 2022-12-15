@@ -6,11 +6,12 @@ import {
     HttpCode,
     HttpStatus,
     Param,
-    ParseUUIDPipe, Patch,
+    ParseUUIDPipe,
+    Patch,
     Post,
     Put,
-    Query
-} from "@nestjs/common";
+    Query,
+} from '@nestjs/common';
 import { ApiQuery, ApiTags } from '@nestjs/swagger';
 
 import { Product } from 'src/product/entity/product.entity';
@@ -116,7 +117,10 @@ export class ProductController {
         const response: ApiResponse<Product> = {
             message: 'Updated',
             statusCode: HttpStatus.OK,
-            result: await this.productService.addCategory(idProduct, idCategory),
+            result: await this.productService.addCategory(
+                idProduct,
+                idCategory,
+            ),
         };
         return response;
     }
@@ -130,7 +134,10 @@ export class ProductController {
         const response: ApiResponse<Product> = {
             message: 'Deleted',
             statusCode: HttpStatus.OK,
-            result: await this.productService.deleteCategory(idProduct, idCategory),
+            result: await this.productService.deleteCategory(
+                idProduct,
+                idCategory,
+            ),
         };
         return response;
     }

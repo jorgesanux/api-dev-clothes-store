@@ -22,10 +22,8 @@ import { ApiTags } from '@nestjs/swagger';
 @Controller('order')
 export class OrderController {
     constructor(
-        private orderService: OrderService,
-    ) // private customerService: CustomerService,
-    // private productService: ProductService,
-    {}
+        private orderService: OrderService, // private customerService: CustomerService, // private productService: ProductService,
+    ) {}
 
     @Get('/')
     @HttpCode(HttpStatus.OK)

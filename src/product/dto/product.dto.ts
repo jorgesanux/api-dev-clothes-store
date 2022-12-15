@@ -5,8 +5,10 @@ import {
     IsUrl,
     IsNotEmpty,
     IsPositive,
-    IsUUID, IsArray, ArrayNotEmpty
-} from "class-validator";
+    IsUUID,
+    IsArray,
+    ArrayNotEmpty,
+} from 'class-validator';
 
 export class CreateProductDTO {
     @IsString()
