@@ -1,6 +1,7 @@
 import { Column, Entity, JoinColumn, OneToOne } from 'typeorm';
 import { BaseEntity } from '../../common/entity/base.entity';
 import { User } from './user.entity';
+import { Order } from '../../order/entity/order.entity';
 
 @Entity('customer')
 export class Customer extends BaseEntity {
@@ -27,4 +28,7 @@ export class Customer extends BaseEntity {
     @OneToOne(() => User, (user) => user.customer, { nullable: false })
     @JoinColumn({ name: 'user_id' })
     user: User;
+
+    @OneToOne(() => Order, (order) => order.customer)
+    order: Order;
 }

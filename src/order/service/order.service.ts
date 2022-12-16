@@ -1,40 +1,111 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+    Injectable,
+    InternalServerErrorException,
+    NotFoundException,
+} from '@nestjs/common';
 import { BaseServiceInterface } from 'src/common/interface/base-service.interface';
 import { CreateOrderDTO, UpdateOrderDTO } from '../dto/order.dto';
 import { Order } from '../entity/order.entity';
+import { DeleteResult, QueryFailedError, Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
+import { CustomerService } from '../../user/service/customer.service';
+import { OrderItemService } from './order_item.service';
+import { QueryFailedErrorHandler } from '../../common/handler/query_failed_error.handler';
+import { OrderItem } from '../entity/order_item.entity';
 
 @Injectable()
-export class OrderService implements BaseServiceInterface<Order, number> {
-    private SEQUENCE = 0;
-    private orders: Order[] = [];
+export class OrderService implements BaseServiceInterface<Order, string> {
+    relations: string[] = ['customer', 'orderItems'];
 
-    findAll(): Order[] {
-        return this.orders;
+    constructor(
+        @InjectRepository(Order)
+        private orderRepository: Repository<Order>,
+        private customerService: CustomerService,
+        private orderItemService: OrderItemService,
+    ) {}
+
+    async findAll(
+        limit: number,
+        page: number,
+        relations = this.relations,
+    ): Promise<[Order[], number]> {
+        return this.orderRepository.findAndCount({
+            relations,
+            order: { id: 'DESC' },
+            take: limit,
+            skip: limit * page - limit,
+        });
     }
-    findOne(id: number): Order {
-        const order: Order = this.orders.find((o) => o.id === id);
-        if (!order) {
-            throw new NotFoundException(`Order with id ${id} not found`);
+
+    async findOne(id: string, relations = this.relations): Promise<Order> {
+        const order: Order = await this.orderRepository.findOne({
+            relations,
+            where: {
+                id,
+            },
+        });
+        if (order !== null) return order;
+
+        throw new NotFoundException(`Order with id ${id} not found`);
+    }
+
+    async create(payload: CreateOrderDTO): Promise<Order> {
+        try {
+            const tempOrder: Order = new Order();
+            tempOrder.customer = await this.customerService.findOne(
+                payload.customer,
+            );
+            tempOrder.observation = payload.observation;
+
+            const order: Order = await this.orderRepository.save(tempOrder);
+            for (const orderItemDTO of payload.orderItems) {
+                const orderItem: OrderItem =
+                    await this.orderItemService.createWithOrder(
+                        order,
+                        orderItemDTO,
+                    );
+                order.orderItems.push(orderItem);
+                order.total += orderItem.totalValue;
+            }
+            return await this.orderRepository.save(order);
+        } catch (e: unknown) {
+            if (e instanceof QueryFailedError)
+                QueryFailedErrorHandler.handle(e as QueryFailedError);
+            throw e;
         }
-        return order;
     }
-    create(payload: Order): Order {
-        this.SEQUENCE++;
-        const order: Order = {
-            id: this.SEQUENCE,
-            ...payload,
-        };
-        this.orders.push(order);
-        return order;
-    }
-    update(id: number, payload: UpdateOrderDTO): Order {
-        const orderIndex = this.orders.findIndex((c) => c.id === id);
-        if (orderIndex < 0) {
-            throw new NotFoundException(`Order with id ${id} not found`);
+
+    async update(id: string, payload: UpdateOrderDTO): Promise<Order> {
+        try {
+            const order: Order = await this.findOne(id);
+
+            // if (payload.brandId)
+            //     order.brand = await this.brandService.findOne(
+            //         payload.brandId,
+            //     );
+            //
+            // if (payload.categoriesIds)
+            //     order.categories = await this.categoryService.findMany(
+            //         payload.categoriesIds,
+            //     );
+
+            await this.orderRepository.merge(order, {});
+            return await this.orderRepository.save(order);
+        } catch (e: unknown) {
+            if (e instanceof QueryFailedError)
+                QueryFailedErrorHandler.handle(e as QueryFailedError);
+            throw e;
         }
-        return Object.assign(this.orders[orderIndex], payload);
     }
-    delete(id: number): Order {
-        throw new Error('Method not implemented.');
+
+    async delete(id: string): Promise<Order> {
+        const order: Order = await this.findOne(id);
+        const result: DeleteResult = await this.orderRepository.delete({
+            id: order.id,
+        });
+        if (result.affected > 0) return order;
+        throw new InternalServerErrorException(
+            `Can not delete the order with id ${id}`,
+        );
     }
 }
