@@ -8,17 +8,17 @@ export class OrderItem extends BaseEntity {
     @Column({ type: 'float' })
     quantity: number;
 
-    @Column({ type: 'float' })
+    @Column({ name: "unit_value", type: 'float' })
     unitValue: number;
 
-    @Column({ type: 'float' })
+    @Column({ name: "total_value", type: 'float' })
     totalValue: number;
 
     @ManyToOne(() => Order, (order) => order.orderItems, { nullable: false })
     @JoinColumn({ name: 'order_id' })
     order: Order;
 
-    @ManyToOne(() => Product, () => null, { nullable: false })
+    @ManyToOne(() => Product)
     @JoinColumn({ name: 'product_id' })
     product: Product;
 }

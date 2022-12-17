@@ -6,12 +6,11 @@ import {
     NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DeleteResult, In, QueryFailedError, Repository } from 'typeorm';
+import { DeleteResult, QueryFailedError, Repository } from "typeorm";
 import { CreateOrderItemDTO, UpdateOrderItemDTO } from '../dto/order_item.dto';
 import { QueryFailedErrorHandler } from 'src/common/handler/query_failed_error.handler';
 import { OrderService } from './order.service';
 import { ProductService } from '../../product/service/product.service';
-import { Order } from '../entity/order.entity';
 
 @Injectable()
 export class OrderItemService
@@ -22,7 +21,7 @@ export class OrderItemService
     constructor(
         @InjectRepository(OrderItem)
         private orderItemRepository: Repository<OrderItem>,
-        // private orderService: OrderService,
+        private orderService: OrderService,
         private productService: ProductService,
     ) {}
 
@@ -51,13 +50,10 @@ export class OrderItemService
         throw new NotFoundException(`OrderItem with id ${id} not found`);
     }
 
-    async createWithOrder(
-        order: Order,
-        payload: CreateOrderItemDTO,
-    ): Promise<OrderItem> {
+    async create(payload: CreateOrderItemDTO): Promise<OrderItem> {
         try {
             const orderItem: OrderItem = new OrderItem();
-            orderItem.order = order;
+            orderItem.order = await this.orderService.findOne(payload.order, []);
             orderItem.product = await this.productService.findOne(
                 payload.product,
                 [],
@@ -78,17 +74,21 @@ export class OrderItemService
         try {
             const orderItem: OrderItem = await this.findOne(id);
 
-            // if (payload.brandId)
-            //     orderItem.brand = await this.brandService.findOne(
-            //         payload.brandId,
-            //     );
-            //
-            // if (payload.categoriesIds)
-            //     orderItem.categories = await this.categoryService.findMany(
-            //         payload.categoriesIds,
-            //     );
+            if(orderItem.quantity) orderItem.quantity = payload.quantity;
 
-            await this.orderItemRepository.merge(orderItem, {});
+            if (payload.order)
+                orderItem.order = await this.orderService.findOne(payload.order, []);
+
+            if (payload.product) {
+                orderItem.product = await this.productService.findOne(
+                    payload.product,
+                    [],
+                );
+            }
+
+            orderItem.unitValue = orderItem.product.price;
+            orderItem.totalValue = orderItem.quantity * orderItem.unitValue;
+
             return await this.orderItemRepository.save(orderItem);
         } catch (e: unknown) {
             if (e instanceof QueryFailedError)
@@ -106,9 +106,5 @@ export class OrderItemService
         throw new InternalServerErrorException(
             `Can not delete the orderItem with id ${id}`,
         );
-    }
-
-    create(payload: any): Promise<OrderItem> | OrderItem {
-        return undefined;
     }
 }

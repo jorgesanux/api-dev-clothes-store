@@ -1,5 +1,5 @@
 import { BaseEntity } from '../../common/entity/base.entity';
-import { Column, Entity, JoinColumn, OneToMany, OneToOne } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne } from "typeorm";
 import { OrderItem } from './order_item.entity';
 import { Customer } from '../../user/entity/customer.entity';
 
@@ -11,10 +11,11 @@ export class Order extends BaseEntity {
     @Column({ type: 'text', nullable: true })
     observation: string;
 
-    @OneToOne(() => Customer, (customer) => customer.order)
+    @ManyToOne(() => Customer, (customer) => customer.order)
     @JoinColumn({ name: 'customer_id' })
     customer: Customer;
 
-    @OneToMany(() => OrderItem, () => null)
+    @OneToMany(() => OrderItem, (orderItem) => orderItem.order)
+    // @OneToMany("OrderItem", "ord er")
     orderItems: OrderItem[];
 }
