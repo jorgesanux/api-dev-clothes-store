@@ -8,7 +8,7 @@ export interface BaseServiceInterface<T = any, Y = any> {
         page: number,
         relations?: string[] | Object,
     ): T[] | Promise<T[]> | Promise<[T[], number]>;
-    findOne(id: Y, relations?: string[]): T | Promise<T>;
+    findOne(id: Y, relations?: string[] | Object,): T | Promise<T>;
     create(payload: any): T | Promise<T>;
     update(id: Y, payload: any): T | Promise<T>;
     delete(id: Y): T | Promise<T>;
