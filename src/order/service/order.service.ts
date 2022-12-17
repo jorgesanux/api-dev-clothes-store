@@ -13,7 +13,12 @@ import { QueryFailedErrorHandler } from '../../common/handler/query_failed_error
 
 @Injectable()
 export class OrderService implements BaseServiceInterface<Order, string> {
-    relations: string[] = ['customer', 'orderItems'];
+    relations: Object = {
+        customer: true,
+        orderItems: {
+            product: true
+        }
+    };
 
     constructor(
         private dataSource: DataSource,
