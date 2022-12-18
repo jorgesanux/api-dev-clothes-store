@@ -19,6 +19,7 @@ import { Brand } from 'src/product/entity/brand.entity';
 import { ApiResponse } from 'src/common/interface/api_response.interface';
 import { BrandService } from 'src/product/service/brand.service';
 import { Constant } from 'src/common/constant';
+import { BrandQueryDTO } from "../dto/brand_query.dto";
 
 @ApiTags('Brand')
 @Controller('brand')
@@ -27,16 +28,18 @@ export class BrandController {
 
     @ApiQuery({ name: 'limit', type: 'number', required: false })
     @ApiQuery({ name: 'page', type: 'number', required: false })
+    @ApiQuery({ name: 'name', type: 'string', required: false })
+    @ApiQuery({ name: 'description', type: 'text', required: false })
+    @ApiQuery({ name: 'createdAtInit', type: 'datetime', required: false })
+    @ApiQuery({ name: 'createdAtEnd', type: 'datetime', required: false })
+    @ApiQuery({ name: 'updatedAtInit', type: 'datetime', required: false })
+    @ApiQuery({ name: 'updatedAtEnd', type: 'datetime', required: false })
     @Get('/')
     @HttpCode(HttpStatus.OK)
     async getAll(
-        @Query('limit') limit = Constant.controllerParams.LIMIT,
-        @Query('page') page = Constant.controllerParams.PAGE,
+        @Query() queryParams: BrandQueryDTO
     ): Promise<ApiResponse<Brand>> {
-        if (limit <= 0) limit = Constant.controllerParams.LIMIT;
-        if (page <= 0) page = Constant.controllerParams.PAGE;
-
-        const [brands, count] = await this.brandService.findAll(limit, page);
+        const [brands, count] = await this.brandService.findAll(queryParams);
 
         const response: ApiResponse<Brand> = {
             statusCode: HttpStatus.OK,
