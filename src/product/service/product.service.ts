@@ -88,6 +88,7 @@ export class ProductService implements BaseServiceInterface<Product, string> {
 
         return this.productRepository.findAndCount({
             relations,
+            where,
             order: { createdAt: 'DESC' },
             take: limit,
             skip: limit * page - limit,
