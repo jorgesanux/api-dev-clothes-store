@@ -13,11 +13,14 @@ import {
     Repository,
 } from 'typeorm';
 
-import { CreateBrandDTO, UpdateBrandDTO } from 'src/product/dto/brand.dto';
+import {
+    CreateBrandDTO,
+    UpdateBrandDTO,
+    QueryBrandDTO,
+} from 'src/product/dto/brand.dto';
 import { Brand } from 'src/product/entity/brand.entity';
 import { BaseServiceInterface } from 'src/common/interface/base-service.interface';
 import { QueryFailedErrorHandler } from 'src/common/handler/query_failed_error.handler';
-import { BrandQueryDTO } from '../dto/brand_query.dto';
 
 @Injectable()
 export class BrandService implements BaseServiceInterface<Brand, string> {
@@ -25,7 +28,7 @@ export class BrandService implements BaseServiceInterface<Brand, string> {
         @InjectRepository(Brand) private brandRepository: Repository<Brand>,
     ) {}
 
-    async findAll(queryDTO: BrandQueryDTO): Promise<[Brand[], number]> {
+    async findAll(queryDTO: QueryBrandDTO): Promise<[Brand[], number]> {
         const {
             name,
             description,

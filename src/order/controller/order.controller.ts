@@ -12,14 +12,14 @@ import {
     Query,
 } from '@nestjs/common';
 import { ApiResponse } from 'src/common/interface/api_response.interface';
-import { CustomerService } from 'src/user/service/customer.service';
-import { CreateOrderDTO, UpdateOrderDTO } from '../dto/order.dto';
+import {
+    CreateOrderDTO,
+    UpdateOrderDTO,
+    QueryOrderDTO,
+} from '../dto/order.dto';
 import { Order } from '../entity/order.entity';
 import { OrderService } from '../service/order.service';
 import { ApiQuery, ApiTags } from '@nestjs/swagger';
-import { Constant } from 'src/common/constant';
-import { OrderQueryDTO } from '../dto/order_query.dto';
-import { plainToClass } from 'class-transformer';
 
 @ApiTags('Order')
 @Controller('order')
@@ -38,7 +38,7 @@ export class OrderController {
     @Get('/')
     @HttpCode(HttpStatus.OK)
     async getAll(
-        @Query() queryParams: OrderQueryDTO,
+        @Query() queryParams: QueryOrderDTO,
     ): Promise<ApiResponse<Order>> {
         const [orders, count] = await this.orderService.findAll(queryParams);
 

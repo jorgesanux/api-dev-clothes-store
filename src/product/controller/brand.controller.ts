@@ -14,12 +14,14 @@ import {
 } from '@nestjs/common';
 import { ApiQuery, ApiTags } from '@nestjs/swagger';
 
-import { CreateBrandDTO, UpdateBrandDTO } from 'src/product/dto/brand.dto';
+import {
+    CreateBrandDTO,
+    UpdateBrandDTO,
+    QueryBrandDTO,
+} from 'src/product/dto/brand.dto';
 import { Brand } from 'src/product/entity/brand.entity';
 import { ApiResponse } from 'src/common/interface/api_response.interface';
 import { BrandService } from 'src/product/service/brand.service';
-import { Constant } from 'src/common/constant';
-import { BrandQueryDTO } from '../dto/brand_query.dto';
 
 @ApiTags('Brand')
 @Controller('brand')
@@ -37,7 +39,7 @@ export class BrandController {
     @Get('/')
     @HttpCode(HttpStatus.OK)
     async getAll(
-        @Query() queryParams: BrandQueryDTO,
+        @Query() queryParams: QueryBrandDTO,
     ): Promise<ApiResponse<Brand>> {
         const [brands, count] = await this.brandService.findAll(queryParams);
 

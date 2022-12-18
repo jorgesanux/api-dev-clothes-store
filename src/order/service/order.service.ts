@@ -4,7 +4,11 @@ import {
     NotFoundException,
 } from '@nestjs/common';
 import { BaseServiceInterface } from 'src/common/interface/base-service.interface';
-import { CreateOrderDTO, UpdateOrderDTO } from '../dto/order.dto';
+import {
+    CreateOrderDTO,
+    UpdateOrderDTO,
+    QueryOrderDTO,
+} from '../dto/order.dto';
 import { Order } from '../entity/order.entity';
 import {
     Between,
@@ -17,7 +21,6 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { CustomerService } from '../../user/service/customer.service';
 import { QueryFailedErrorHandler } from '../../common/handler/query_failed_error.handler';
-import { OrderQueryDTO } from '../dto/order_query.dto';
 
 @Injectable()
 export class OrderService implements BaseServiceInterface<Order, string> {
@@ -35,7 +38,7 @@ export class OrderService implements BaseServiceInterface<Order, string> {
         private customerService: CustomerService,
     ) {}
     async findAll(
-        queryDTO: OrderQueryDTO,
+        queryDTO: QueryOrderDTO,
         relations = this.relations,
     ): Promise<[Order[], number]> {
         const {

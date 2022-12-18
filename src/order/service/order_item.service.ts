@@ -13,11 +13,14 @@ import {
     QueryFailedError,
     Repository,
 } from 'typeorm';
-import { CreateOrderItemDTO, UpdateOrderItemDTO } from '../dto/order_item.dto';
+import {
+    CreateOrderItemDTO,
+    UpdateOrderItemDTO,
+    QueryOrderItemDTO,
+} from '../dto/order_item.dto';
 import { QueryFailedErrorHandler } from 'src/common/handler/query_failed_error.handler';
 import { OrderService } from './order.service';
 import { ProductService } from '../../product/service/product.service';
-import { OrderItemQueryDTO } from '../dto/order_item_query.dto';
 
 @Injectable()
 export class OrderItemService
@@ -33,7 +36,7 @@ export class OrderItemService
     ) {}
 
     async findAll(
-        queryDTO: OrderItemQueryDTO,
+        queryDTO: QueryOrderItemDTO,
         relations = this.relations,
     ): Promise<[OrderItem[], number]> {
         const {
