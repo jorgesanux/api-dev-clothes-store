@@ -1,12 +1,12 @@
 import { BaseEntity } from '../../common/entity/base.entity';
 import {
     Column,
-    Entity,
+    Entity, Index,
     JoinColumn,
     ManyToOne,
     OneToMany,
-    OneToOne,
-} from 'typeorm';
+    OneToOne
+} from "typeorm";
 import { OrderItem } from './order_item.entity';
 import { Customer } from '../../user/entity/customer.entity';
 
@@ -20,6 +20,7 @@ export class Order extends BaseEntity {
 
     @ManyToOne(() => Customer, (customer) => customer.order)
     @JoinColumn({ name: 'customer_id' })
+    @Index()
     customer: Customer;
 
     @OneToMany(() => OrderItem, (orderItem) => orderItem.order)

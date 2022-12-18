@@ -1,9 +1,10 @@
-import { Column, Entity, JoinColumn, OneToOne } from 'typeorm';
+import { Column, Entity, Index, JoinColumn, OneToOne } from "typeorm";
 import { BaseEntity } from '../../common/entity/base.entity';
 import { User } from './user.entity';
 import { Order } from '../../order/entity/order.entity';
 
 @Entity('customer')
+@Index(['name', 'lastName'])
 export class Customer extends BaseEntity {
     @Column({ type: 'varchar', length: 30, nullable: true })
     name: string;
@@ -27,6 +28,7 @@ export class Customer extends BaseEntity {
 
     @OneToOne(() => User, (user) => user.customer, { nullable: false })
     @JoinColumn({ name: 'user_id' })
+    @Index()
     user: User;
 
     @OneToOne(() => Order, (order) => order.customer)

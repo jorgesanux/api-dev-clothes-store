@@ -1,11 +1,11 @@
 import {
     Column,
-    Entity,
+    Entity, Index,
     JoinColumn,
     JoinTable,
     ManyToMany,
-    ManyToOne,
-} from 'typeorm';
+    ManyToOne
+} from "typeorm";
 import { BaseEntity } from '../../common/entity/base.entity';
 import { Brand } from './brand.entity';
 import { Category } from './category.entity';
@@ -13,6 +13,7 @@ import { Category } from './category.entity';
 @Entity('product')
 export class Product extends BaseEntity {
     @Column({ type: 'varchar', length: 100 })
+    @Index()
     name: string;
 
     @Column({ type: 'text' })
@@ -29,6 +30,7 @@ export class Product extends BaseEntity {
 
     @ManyToOne(() => Brand, (brand) => brand.products, { nullable: false })
     @JoinColumn({ name: 'brand_id' })
+    @Index()
     brand: Brand;
 
     @ManyToMany(() => Category, (category) => category.products, {

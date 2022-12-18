@@ -1,16 +1,17 @@
 import {
     Column,
-    Entity,
+    Entity, Index,
     JoinColumn,
     ManyToMany,
-    PrimaryGeneratedColumn,
-} from 'typeorm';
+    PrimaryGeneratedColumn
+} from "typeorm";
 import { BaseEntity } from '../../common/entity/base.entity';
 import { Product } from './product.entity';
 
 @Entity('category')
 export class Category extends BaseEntity {
     @Column({ type: 'varchar', length: 50 })
+    @Index()
     name: string;
 
     @Column({ type: 'text' })
