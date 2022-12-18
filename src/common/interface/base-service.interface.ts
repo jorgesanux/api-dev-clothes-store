@@ -1,14 +1,18 @@
-export interface BaseServiceInterface<T = any, Y = any> {
-    //TODO: Remove the ? optional
-    relations?: string[] | Object;
+import { BaseEntity } from '../entity/base.entity';
+import { BaseQueryDTO } from '../dto/base_query.dto';
 
-    //TODO: Remove T[] | Promise<T[]> and add [T[], number] only for findAll
+export interface BaseServiceInterface<T extends BaseEntity = any, Y = any> {
+    relations?: string[] | Object;
+    // findAll(
+    //     limit?: number,
+    //     page?: number,
+    //     relations?: string[] | Object,
+    // ): [T[], number] | Promise<[T[], number]>;
     findAll(
-        limit: number,
-        page: number,
+        queryDTO: BaseQueryDTO,
         relations?: string[] | Object,
-    ): T[] | Promise<T[]> | Promise<[T[], number]>;
-    findOne(id: Y, relations?: string[] | Object,): T | Promise<T>;
+    ): [T[], number] | Promise<[T[], number]>;
+    findOne(id: Y, relations?: string[] | Object): T | Promise<T>;
     create(payload: any): T | Promise<T>;
     update(id: Y, payload: any): T | Promise<T>;
     delete(id: Y): T | Promise<T>;

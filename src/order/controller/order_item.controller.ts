@@ -9,14 +9,14 @@ import {
     ParseUUIDPipe,
     Patch,
     Post,
-    Query
-} from "@nestjs/common";
-import { Constant } from "../../common/constant";
-import { CreateOrderItemDTO, UpdateOrderItemDTO } from "../dto/order_item.dto";
-import { ApiResponse } from "../../common/interface/api_response.interface";
-import { ApiQuery, ApiTags } from "@nestjs/swagger";
-import { OrderItemService } from "../service/order_item.service";
-import { OrderItem } from "../entity/order_item.entity";
+    Query,
+} from '@nestjs/common';
+import { Constant } from '../../common/constant';
+import { CreateOrderItemDTO, UpdateOrderItemDTO } from '../dto/order_item.dto';
+import { ApiResponse } from '../../common/interface/api_response.interface';
+import { ApiQuery, ApiTags } from '@nestjs/swagger';
+import { OrderItemService } from '../service/order_item.service';
+import { OrderItem } from '../entity/order_item.entity';
 
 @ApiTags('Order item')
 @Controller('orderItem')
@@ -34,7 +34,10 @@ export class OrderItemController {
         if (limit <= 0) limit = Constant.controllerParams.LIMIT;
         if (page <= 0) page = Constant.controllerParams.PAGE;
 
-        const [orderItems, count] = await this.orderItemService.findAll(limit, page);
+        const [orderItems, count] = await this.orderItemService.findAll(
+            limit,
+            page,
+        );
 
         const response: ApiResponse<OrderItem> = {
             statusCode: HttpStatus.OK,
@@ -60,7 +63,9 @@ export class OrderItemController {
 
     @Post('/')
     @HttpCode(HttpStatus.CREATED)
-    async create(@Body() body: CreateOrderItemDTO): Promise<ApiResponse<OrderItem>> {
+    async create(
+        @Body() body: CreateOrderItemDTO,
+    ): Promise<ApiResponse<OrderItem>> {
         const response: ApiResponse<OrderItem> = {
             message: 'Created',
             statusCode: HttpStatus.CREATED,

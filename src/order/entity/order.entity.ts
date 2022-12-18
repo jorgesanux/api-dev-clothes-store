@@ -1,5 +1,12 @@
 import { BaseEntity } from '../../common/entity/base.entity';
-import { Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne } from "typeorm";
+import {
+    Column,
+    Entity,
+    JoinColumn,
+    ManyToOne,
+    OneToMany,
+    OneToOne,
+} from 'typeorm';
 import { OrderItem } from './order_item.entity';
 import { Customer } from '../../user/entity/customer.entity';
 

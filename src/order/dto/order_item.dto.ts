@@ -15,4 +15,4 @@ export class CreateOrderItemDTO {
     product: string;
 }
 
-export class UpdateOrderItemDTO extends PartialType(CreateOrderItemDTO) { }
+export class UpdateOrderItemDTO extends PartialType(CreateOrderItemDTO) {}

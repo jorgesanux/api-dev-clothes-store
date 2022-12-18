@@ -6,40 +6,72 @@ import {
 import { BaseServiceInterface } from 'src/common/interface/base-service.interface';
 import { CreateOrderDTO, UpdateOrderDTO } from '../dto/order.dto';
 import { Order } from '../entity/order.entity';
-import { DataSource, DeleteResult, QueryFailedError, Repository } from "typeorm";
+import {
+    Between,
+    DataSource,
+    DeleteResult,
+    FindOptionsWhere,
+    QueryFailedError,
+    Repository,
+} from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CustomerService } from '../../user/service/customer.service';
 import { QueryFailedErrorHandler } from '../../common/handler/query_failed_error.handler';
+import { OrderQueryDTO } from '../dto/order_query.dto';
 
 @Injectable()
 export class OrderService implements BaseServiceInterface<Order, string> {
     relations: Object = {
         customer: true,
         orderItems: {
-            product: true
-        }
+            product: true,
+        },
     };
 
     constructor(
         private dataSource: DataSource,
         @InjectRepository(Order)
         private orderRepository: Repository<Order>,
-        private customerService: CustomerService
+        private customerService: CustomerService,
     ) {}
-
     async findAll(
-        limit: number,
-        page: number,
+        queryDTO: OrderQueryDTO,
         relations = this.relations,
     ): Promise<[Order[], number]> {
+        const {
+            limit,
+            page,
+            observation,
+            updatedAtInit,
+            updatedAtEnd,
+            createdAtInit,
+            createdAtEnd,
+            totalInit,
+            totalEnd,
+        } = queryDTO;
+        const where: FindOptionsWhere<Order> = {
+            observation,
+            total:
+                totalInit && totalEnd
+                    ? Between(totalInit, totalEnd)
+                    : undefined,
+            updatedAt:
+                updatedAtInit && updatedAtEnd
+                    ? Between(updatedAtInit, updatedAtEnd)
+                    : undefined,
+            createdAt:
+                createdAtInit && createdAtEnd
+                    ? Between(createdAtInit, createdAtEnd)
+                    : undefined,
+        };
         return this.orderRepository.findAndCount({
             relations,
-            order: { id: 'DESC' },
+            where,
+            order: { createdAt: 'DESC' },
             take: limit,
             skip: limit * page - limit,
         });
     }
-
     async findOne(id: string, relations = this.relations): Promise<Order> {
         const order: Order = await this.orderRepository.findOne({
             relations,
@@ -55,7 +87,9 @@ export class OrderService implements BaseServiceInterface<Order, string> {
     async create(payload: CreateOrderDTO): Promise<Order> {
         try {
             const order: Order = new Order();
-            order.customer = await this.customerService.findOne(payload.customerId);
+            order.customer = await this.customerService.findOne(
+                payload.customerId,
+            );
             order.observation = payload.observation;
 
             return await this.orderRepository.save(order);
@@ -70,8 +104,10 @@ export class OrderService implements BaseServiceInterface<Order, string> {
         try {
             const order: Order = await this.findOne(id);
 
-            if(payload.customerId)
-                order.customer = await this.customerService.findOne(payload.customerId);
+            if (payload.customerId)
+                order.customer = await this.customerService.findOne(
+                    payload.customerId,
+                );
 
             await this.orderRepository.merge(order, payload);
             return await this.orderRepository.save(order);

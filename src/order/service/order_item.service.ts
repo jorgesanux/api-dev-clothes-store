@@ -6,7 +6,7 @@ import {
     NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DeleteResult, QueryFailedError, Repository } from "typeorm";
+import { DeleteResult, QueryFailedError, Repository } from 'typeorm';
 import { CreateOrderItemDTO, UpdateOrderItemDTO } from '../dto/order_item.dto';
 import { QueryFailedErrorHandler } from 'src/common/handler/query_failed_error.handler';
 import { OrderService } from './order.service';
@@ -53,7 +53,10 @@ export class OrderItemService
     async create(payload: CreateOrderItemDTO): Promise<OrderItem> {
         try {
             const orderItem: OrderItem = new OrderItem();
-            orderItem.order = await this.orderService.findOne(payload.order, []);
+            orderItem.order = await this.orderService.findOne(
+                payload.order,
+                [],
+            );
             orderItem.product = await this.productService.findOne(
                 payload.product,
                 [],
@@ -74,10 +77,13 @@ export class OrderItemService
         try {
             const orderItem: OrderItem = await this.findOne(id);
 
-            if(orderItem.quantity) orderItem.quantity = payload.quantity;
+            if (orderItem.quantity) orderItem.quantity = payload.quantity;
 
             if (payload.order)
-                orderItem.order = await this.orderService.findOne(payload.order, []);
+                orderItem.order = await this.orderService.findOne(
+                    payload.order,
+                    [],
+                );
 
             if (payload.product) {
                 orderItem.product = await this.productService.findOne(

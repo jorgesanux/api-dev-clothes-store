@@ -7,7 +7,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Order } from './entity/order.entity';
 import { OrderItem } from './entity/order_item.entity';
 import { OrderItemService } from './service/order_item.service';
-import { OrderItemController } from "./controller/order_item.controller";
+import { OrderItemController } from './controller/order_item.controller';
 
 @Module({
     imports: [

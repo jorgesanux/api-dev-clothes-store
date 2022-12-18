@@ -1,10 +1,5 @@
 import { PartialType } from '@nestjs/swagger';
-import {
-    IsNotEmpty,
-    IsOptional,
-    IsString,
-    IsUUID,
-} from 'class-validator';
+import { IsNotEmpty, IsOptional, IsString, IsUUID } from 'class-validator';
 
 export class CreateOrderDTO {
     @IsString()

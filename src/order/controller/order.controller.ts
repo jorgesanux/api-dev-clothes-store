@@ -18,6 +18,8 @@ import { Order } from '../entity/order.entity';
 import { OrderService } from '../service/order.service';
 import { ApiQuery, ApiTags } from '@nestjs/swagger';
 import { Constant } from 'src/common/constant';
+import { OrderQueryDTO } from '../dto/order_query.dto';
+import { plainToClass } from 'class-transformer';
 
 @ApiTags('Order')
 @Controller('order')
@@ -26,16 +28,19 @@ export class OrderController {
 
     @ApiQuery({ name: 'limit', type: 'number', required: false })
     @ApiQuery({ name: 'page', type: 'number', required: false })
+    @ApiQuery({ name: 'totalInit', type: 'number', required: false })
+    @ApiQuery({ name: 'totalEnd', type: 'number', required: false })
+    @ApiQuery({ name: 'observation', type: 'text', required: false })
+    @ApiQuery({ name: 'createdAtInit', type: 'datetime', required: false })
+    @ApiQuery({ name: 'createdAtEnd', type: 'datetime', required: false })
+    @ApiQuery({ name: 'updatedAtInit', type: 'datetime', required: false })
+    @ApiQuery({ name: 'updatedAtEnd', type: 'datetime', required: false })
     @Get('/')
     @HttpCode(HttpStatus.OK)
     async getAll(
-        @Query('limit') limit = Constant.controllerParams.LIMIT,
-        @Query('page') page = Constant.controllerParams.PAGE,
+        @Query() queryParams: OrderQueryDTO,
     ): Promise<ApiResponse<Order>> {
-        if (limit <= 0) limit = Constant.controllerParams.LIMIT;
-        if (page <= 0) page = Constant.controllerParams.PAGE;
-
-        const [orders, count] = await this.orderService.findAll(limit, page);
+        const [orders, count] = await this.orderService.findAll(queryParams);
 
         const response: ApiResponse<Order> = {
             statusCode: HttpStatus.OK,

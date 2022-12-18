@@ -8,10 +8,10 @@ export class OrderItem extends BaseEntity {
     @Column({ type: 'float' })
     quantity: number;
 
-    @Column({ name: "unit_value", type: 'float' })
+    @Column({ name: 'unit_value', type: 'float' })
     unitValue: number;
 
-    @Column({ name: "total_value", type: 'float' })
+    @Column({ name: 'total_value', type: 'float' })
     totalValue: number;
 
     @ManyToOne(() => Order, (order) => order.orderItems, { nullable: false })
