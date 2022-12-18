@@ -58,7 +58,9 @@ export class CustomerService implements BaseServiceInterface<Customer, string> {
             companyName: companyName ? Like(`%${companyName}%`) : undefined,
             address: address ? Like(`%${address}%`) : undefined,
             phone: phone ? Like(`%${phone}%`) : undefined,
-            user: userId ? await this.userService.findOne(userId) : undefined,
+            user: {
+                id: userId || undefined
+            },
             updatedAt:
                 updatedAtInit && updatedAtEnd
                     ? Between(updatedAtInit, updatedAtEnd)
