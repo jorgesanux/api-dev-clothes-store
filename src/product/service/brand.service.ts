@@ -4,13 +4,20 @@ import {
     NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Between, DeleteResult, FindOptionsWhere, Like, QueryFailedError, Repository } from "typeorm";
+import {
+    Between,
+    DeleteResult,
+    FindOptionsWhere,
+    Like,
+    QueryFailedError,
+    Repository,
+} from 'typeorm';
 
 import { CreateBrandDTO, UpdateBrandDTO } from 'src/product/dto/brand.dto';
 import { Brand } from 'src/product/entity/brand.entity';
 import { BaseServiceInterface } from 'src/common/interface/base-service.interface';
 import { QueryFailedErrorHandler } from 'src/common/handler/query_failed_error.handler';
-import { BrandQueryDTO } from "../dto/brand_query.dto";
+import { BrandQueryDTO } from '../dto/brand_query.dto';
 
 @Injectable()
 export class BrandService implements BaseServiceInterface<Brand, string> {
@@ -19,7 +26,16 @@ export class BrandService implements BaseServiceInterface<Brand, string> {
     ) {}
 
     async findAll(queryDTO: BrandQueryDTO): Promise<[Brand[], number]> {
-        const { name, description, page, createdAtInit, createdAtEnd, updatedAtInit, updatedAtEnd, limit } = queryDTO;
+        const {
+            name,
+            description,
+            page,
+            createdAtInit,
+            createdAtEnd,
+            updatedAtInit,
+            updatedAtEnd,
+            limit,
+        } = queryDTO;
         const where: FindOptionsWhere<Brand> = {
             name: name ? Like(`%${name}%`) : undefined,
             description: description ? Like(`%${description}%`) : undefined,

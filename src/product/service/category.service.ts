@@ -3,10 +3,19 @@ import {
     InternalServerErrorException,
     NotFoundException,
 } from '@nestjs/common';
-import { DeleteResult, In, QueryFailedError, Repository } from 'typeorm';
+import {
+    Between,
+    DeleteResult,
+    FindOptionsWhere,
+    In,
+    Like,
+    QueryFailedError,
+    Repository,
+} from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import {
+    QueryCategoryDTO,
     CreateCategoryDTO,
     UpdateCategoryDTO,
 } from 'src/product/dto/category.dto';
@@ -21,9 +30,32 @@ export class CategoryService implements BaseServiceInterface<Category, string> {
         private categoryRepository: Repository<Category>,
     ) {}
 
-    async findAll(limit: number, page: number): Promise<[Category[], number]> {
+    async findAll(queryDTO: QueryCategoryDTO): Promise<[Category[], number]> {
+        const {
+            limit,
+            page,
+            updatedAtInit,
+            updatedAtEnd,
+            createdAtInit,
+            createdAtEnd,
+            name,
+            description,
+        } = queryDTO;
+        const where: FindOptionsWhere<Category> = {
+            name: name ? Like(`%${name}%`) : undefined,
+            description: description ? Like(`%${description}%`) : undefined,
+            updatedAt:
+                updatedAtInit && updatedAtEnd
+                    ? Between(updatedAtInit, updatedAtEnd)
+                    : undefined,
+            createdAt:
+                createdAtInit && createdAtEnd
+                    ? Between(createdAtInit, createdAtEnd)
+                    : undefined,
+        };
         return this.categoryRepository.findAndCount({
-            order: { id: 'DESC' },
+            where,
+            order: { createdAt: 'DESC' },
             take: limit,
             skip: limit * page - limit,
         });

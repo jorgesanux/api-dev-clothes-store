@@ -19,6 +19,7 @@ import { Category } from 'src/product/entity/category.entity';
 import { CategoryService } from 'src/product/service/category.service';
 import {
     CreateCategoryDTO,
+    QueryCategoryDTO,
     UpdateCategoryDTO,
 } from 'src/product/dto/category.dto';
 import { Constant } from 'src/common/constant';
@@ -30,24 +31,25 @@ export class CategoryController {
 
     @ApiQuery({ name: 'limit', type: 'number', required: false })
     @ApiQuery({ name: 'page', type: 'number', required: false })
+    @ApiQuery({ name: 'name', type: 'string', required: false })
+    @ApiQuery({ name: 'description', type: 'text', required: false })
+    @ApiQuery({ name: 'createdAtInit', type: 'datetime', required: false })
+    @ApiQuery({ name: 'createdAtEnd', type: 'datetime', required: false })
+    @ApiQuery({ name: 'updatedAtInit', type: 'datetime', required: false })
+    @ApiQuery({ name: 'updatedAtEnd', type: 'datetime', required: false })
     @Get('/')
     @HttpCode(HttpStatus.OK)
     async getAll(
-        @Query('limit') limit = Constant.controllerParams.LIMIT,
-        @Query('page') page = Constant.controllerParams.PAGE,
+        @Query() queryParams: QueryCategoryDTO,
     ): Promise<ApiResponse<Category>> {
-        if (limit <= 0) limit = Constant.controllerParams.LIMIT;
-        if (page <= 0) page = Constant.controllerParams.PAGE;
-
-        const [categorys, count] = await this.categoryService.findAll(
-            limit,
-            page,
+        const [categories, count] = await this.categoryService.findAll(
+            queryParams,
         );
 
         const response: ApiResponse<Category> = {
             statusCode: HttpStatus.OK,
             message: 'OK',
-            results: categorys,
+            results: categories,
             count,
         };
         return response;
