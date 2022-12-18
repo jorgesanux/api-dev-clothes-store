@@ -15,6 +15,7 @@ import { ApiQuery, ApiTags } from '@nestjs/swagger';
 
 import {
     CreateCustomerDTO,
+    QueryCustomerDTO,
     UpdateCustomerDTO,
 } from 'src/user/dto/customer.dto';
 import { Customer } from 'src/user/entity/customer.entity';
@@ -29,18 +30,23 @@ export class CustomerController {
 
     @ApiQuery({ name: 'limit', type: 'number', required: false })
     @ApiQuery({ name: 'page', type: 'number', required: false })
+    @ApiQuery({ name: 'userId', type: 'uuidv4', required: false })
+    @ApiQuery({ name: 'name', type: 'string', required: false })
+    @ApiQuery({ name: 'lastName', type: 'string', required: false })
+    @ApiQuery({ name: 'companyName', type: 'string', required: false })
+    @ApiQuery({ name: 'address', type: 'string', required: false })
+    @ApiQuery({ name: 'phone', type: 'string', required: false })
+    @ApiQuery({ name: 'createdAtInit', type: 'datetime', required: false })
+    @ApiQuery({ name: 'createdAtEnd', type: 'datetime', required: false })
+    @ApiQuery({ name: 'updatedAtInit', type: 'datetime', required: false })
+    @ApiQuery({ name: 'updatedAtEnd', type: 'datetime', required: false })
     @Get('/')
     @HttpCode(HttpStatus.OK)
     async getAll(
-        @Query('limit') limit = Constant.controllerParams.LIMIT,
-        @Query('page') page = Constant.controllerParams.PAGE,
+        @Query() queryParams: QueryCustomerDTO,
     ): Promise<ApiResponse<Customer>> {
-        if (limit <= 0) limit = Constant.controllerParams.LIMIT;
-        if (page <= 0) page = Constant.controllerParams.PAGE;
-
         const [customers, count] = await this.customerService.findAll(
-            limit,
-            page,
+            queryParams,
         );
 
         const response: ApiResponse<Customer> = {

@@ -1,5 +1,7 @@
 import { PartialType } from '@nestjs/swagger';
-import { IsNotEmpty, IsString, IsUUID } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsString, IsUUID } from 'class-validator';
+import { BaseQueryDTO } from '../../common/dto/base_query.dto';
+import { User } from '../entity/user.entity';
 
 export class CreateCustomerDTO {
     @IsString()
@@ -27,3 +29,29 @@ export class CreateCustomerDTO {
 }
 
 export class UpdateCustomerDTO extends PartialType(CreateCustomerDTO) {}
+
+export class QueryCustomerDTO extends BaseQueryDTO {
+    @IsString()
+    @IsOptional()
+    name?: string;
+
+    @IsString()
+    @IsOptional()
+    lastName?: string;
+
+    @IsString()
+    @IsOptional()
+    companyName?: string;
+
+    @IsString()
+    @IsOptional()
+    address?: string;
+
+    @IsString()
+    @IsOptional()
+    phone?: string;
+
+    @IsUUID()
+    @IsOptional()
+    userId?: string;
+}

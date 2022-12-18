@@ -5,10 +5,18 @@ import {
     NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DeleteResult, QueryFailedError, Repository } from 'typeorm';
+import {
+    Between,
+    DeleteResult,
+    FindOptionsWhere,
+    Like,
+    QueryFailedError,
+    Repository,
+} from 'typeorm';
 
 import {
     CreateCustomerDTO,
+    QueryCustomerDTO,
     UpdateCustomerDTO,
 } from 'src/user/dto/customer.dto';
 import { Customer } from 'src/user/entity/customer.entity';
@@ -27,11 +35,41 @@ export class CustomerService implements BaseServiceInterface<Customer, string> {
     relations: string[] = ['user'];
 
     async findAll(
-        limit: number,
-        page: number,
+        queryDTO: QueryCustomerDTO,
         relations = this.relations,
     ): Promise<[Customer[], number]> {
+        const {
+            userId,
+            name,
+            lastName,
+            companyName,
+            address,
+            limit,
+            page,
+            updatedAtInit,
+            updatedAtEnd,
+            createdAtInit,
+            createdAtEnd,
+            phone,
+        } = queryDTO;
+        const where: FindOptionsWhere<Customer> = {
+            name: name ? Like(`%${name}%`) : undefined,
+            lastName: lastName ? Like(`%${lastName}%`) : undefined,
+            companyName: companyName ? Like(`%${companyName}%`) : undefined,
+            address: address ? Like(`%${address}%`) : undefined,
+            phone: phone ? Like(`%${phone}%`) : undefined,
+            user: userId ? await this.userService.findOne(userId) : undefined,
+            updatedAt:
+                updatedAtInit && updatedAtEnd
+                    ? Between(updatedAtInit, updatedAtEnd)
+                    : undefined,
+            createdAt:
+                createdAtInit && createdAtEnd
+                    ? Between(createdAtInit, createdAtEnd)
+                    : undefined,
+        };
         return this.customerRepository.findAndCount({
+            where,
             relations,
             order: { id: 'DESC' },
             take: limit,
