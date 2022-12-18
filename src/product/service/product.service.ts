@@ -5,13 +5,14 @@ import {
     NotFoundException,
 } from '@nestjs/common';
 import {
+    ArrayContains,
     Between,
     DeleteResult,
     FindOptionsWhere,
     Like,
     QueryFailedError,
-    Repository,
-} from 'typeorm';
+    Repository
+} from "typeorm";
 import { InjectRepository } from '@nestjs/typeorm';
 
 import {
@@ -59,12 +60,12 @@ export class ProductService implements BaseServiceInterface<Product, string> {
             categoryId,
         } = queryDTO;
         const where: FindOptionsWhere<Product> = {
-            brand: brandId
-                ? await this.brandService.findOne(brandId)
-                : undefined,
-            categories: categoryId
-                ? [await this.categoryService.findOne(categoryId)]
-                : undefined,
+            brand: {
+                id: brandId ? brandId : undefined
+            },
+            categories: {
+                id: categoryId ? categoryId : undefined
+            },
             price:
                 priceInit && priceEnd
                     ? Between(priceInit, priceEnd)
