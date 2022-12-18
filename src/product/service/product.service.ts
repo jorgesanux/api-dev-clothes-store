@@ -61,10 +61,10 @@ export class ProductService implements BaseServiceInterface<Product, string> {
         } = queryDTO;
         const where: FindOptionsWhere<Product> = {
             brand: {
-                id: brandId ? brandId : undefined
+                id: brandId || undefined
             },
             categories: {
-                id: categoryId ? categoryId : undefined
+                id: categoryId || undefined
             },
             price:
                 priceInit && priceEnd
