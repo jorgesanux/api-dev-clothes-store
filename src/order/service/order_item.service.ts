@@ -54,12 +54,12 @@ export class OrderItemService
             limit,
         } = queryDTO;
         const where: FindOptionsWhere<OrderItem> = {
-            product: productId
-                ? await this.productService.findOne(productId, [])
-                : undefined,
-            order: orderId
-                ? await this.orderService.findOne(orderId, [])
-                : undefined,
+            product: {
+                id: productId || undefined
+            },
+            order: {
+                id: orderId || undefined
+            },
             quantity:
                 quantityInit && quantityEnd
                     ? Between(quantityInit, quantityEnd)
