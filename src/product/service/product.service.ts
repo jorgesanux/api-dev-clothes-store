@@ -4,11 +4,19 @@ import {
     InternalServerErrorException,
     NotFoundException,
 } from '@nestjs/common';
-import { DeleteResult, QueryFailedError, Repository } from 'typeorm';
+import {
+    Between,
+    DeleteResult,
+    FindOptionsWhere,
+    Like,
+    QueryFailedError,
+    Repository,
+} from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import {
     CreateProductDTO,
+    QueryProductDTO,
     UpdateProductDTO,
 } from 'src/product/dto/product.dto';
 import { Product } from 'src/product/entity/product.entity';
@@ -30,13 +38,57 @@ export class ProductService implements BaseServiceInterface<Product, string> {
     ) {}
 
     async findAll(
-        limit: number,
-        page: number,
+        queryDTO: QueryProductDTO,
         relations = this.relations,
     ): Promise<[Product[], number]> {
+        const {
+            brandId,
+            limit,
+            createdAtEnd,
+            page,
+            updatedAtEnd,
+            updatedAtInit,
+            createdAtInit,
+            priceInit,
+            priceEnd,
+            stockInit,
+            stockEnd,
+            description,
+            name,
+            image,
+            categoryId,
+        } = queryDTO;
+        const where: FindOptionsWhere<Product> = {
+            brand: brandId
+                ? await this.brandService.findOne(brandId)
+                : undefined,
+            categories: categoryId
+                ? [await this.categoryService.findOne(categoryId)]
+                : undefined,
+            price:
+                priceInit && priceEnd
+                    ? Between(priceInit, priceEnd)
+                    : undefined,
+            stock:
+                stockInit && stockEnd
+                    ? Between(stockInit, stockEnd)
+                    : undefined,
+            name: name ? Like(`%${name}%`) : undefined,
+            description: description ? Like(`%${description}%`) : undefined,
+            image,
+            updatedAt:
+                updatedAtInit && updatedAtEnd
+                    ? Between(updatedAtInit, updatedAtEnd)
+                    : undefined,
+            createdAt:
+                createdAtInit && createdAtEnd
+                    ? Between(createdAtInit, createdAtEnd)
+                    : undefined,
+        };
+
         return this.productRepository.findAndCount({
             relations,
-            order: { id: 'DESC' },
+            order: { createdAt: 'DESC' },
             take: limit,
             skip: limit * page - limit,
         });

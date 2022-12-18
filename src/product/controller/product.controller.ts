@@ -17,6 +17,7 @@ import { ApiQuery, ApiTags } from '@nestjs/swagger';
 import { Product } from 'src/product/entity/product.entity';
 import {
     CreateProductDTO,
+    QueryProductDTO,
     UpdateProductDTO,
 } from 'src/product/dto/product.dto';
 import { ProductService } from 'src/product/service/product.service';
@@ -30,18 +31,26 @@ export class ProductController {
 
     @ApiQuery({ name: 'limit', type: 'number', required: false })
     @ApiQuery({ name: 'page', type: 'number', required: false })
+    @ApiQuery({ name: 'brandId', type: 'uuidv4', required: false })
+    @ApiQuery({ name: 'categoryId', type: 'uuidv4', required: false })
+    @ApiQuery({ name: 'priceInit', type: 'number', required: false })
+    @ApiQuery({ name: 'priceEnd', type: 'number', required: false })
+    @ApiQuery({ name: 'stockInit', type: 'number', required: false })
+    @ApiQuery({ name: 'stockEnd', type: 'number', required: false })
+    @ApiQuery({ name: 'name', type: 'string', required: false })
+    @ApiQuery({ name: 'description', type: 'text', required: false })
+    @ApiQuery({ name: 'image', type: 'text', required: false })
+    @ApiQuery({ name: 'createdAtInit', type: 'datetime', required: false })
+    @ApiQuery({ name: 'createdAtEnd', type: 'datetime', required: false })
+    @ApiQuery({ name: 'updatedAtInit', type: 'datetime', required: false })
+    @ApiQuery({ name: 'updatedAtEnd', type: 'datetime', required: false })
     @Get('/')
     @HttpCode(HttpStatus.OK)
     async getAll(
-        @Query('limit') limit = Constant.controllerParams.LIMIT,
-        @Query('page') page = Constant.controllerParams.PAGE,
+        @Query() queryParams: QueryProductDTO,
     ): Promise<ApiResponse<Product>> {
-        if (limit <= 0) limit = Constant.controllerParams.LIMIT;
-        if (page <= 0) page = Constant.controllerParams.PAGE;
-
         const [products, count] = await this.productService.findAll(
-            limit,
-            page,
+            queryParams,
         );
 
         const response: ApiResponse<Product> = {
