@@ -1,18 +1,25 @@
 import {
-    ConflictException,
     Injectable,
     InternalServerErrorException,
     NotFoundException,
-    UnprocessableEntityException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DeleteResult, QueryFailedError, Repository } from 'typeorm';
+import {
+    Between,
+    DeleteResult,
+    FindOptionsWhere,
+    QueryFailedError,
+    Repository,
+} from 'typeorm';
 
 import { BaseServiceInterface } from 'src/common/interface/base-service.interface';
 import { User } from 'src/user/entity/user.entity';
-import { CreateUserDTO, UpdateUserDTO } from 'src/user/dto/user.dto';
+import {
+    CreateUserDTO,
+    QueryUserDTO,
+    UpdateUserDTO,
+} from 'src/user/dto/user.dto';
 import { QueryFailedErrorHandler } from '../../common/handler/query_failed_error.handler';
-import { Constant } from '../../common/constant';
 
 @Injectable()
 export class UserService implements BaseServiceInterface<User, string> {
@@ -20,8 +27,32 @@ export class UserService implements BaseServiceInterface<User, string> {
         @InjectRepository(User) private userRepository: Repository<User>,
     ) {}
 
-    async findAll(limit: number, page: number): Promise<[User[], number]> {
+    async findAll(queryDTO: QueryUserDTO): Promise<[User[], number]> {
+        const {
+            role,
+            email,
+            limit,
+            createdAtEnd,
+            updatedAtEnd,
+            createdAtInit,
+            updatedAtInit,
+            page,
+        } = queryDTO;
+        const where: FindOptionsWhere<User> = {
+            email,
+            role,
+            updatedAt:
+                updatedAtInit && updatedAtEnd
+                    ? Between(updatedAtInit, updatedAtEnd)
+                    : undefined,
+            createdAt:
+                createdAtInit && createdAtEnd
+                    ? Between(createdAtInit, createdAtEnd)
+                    : undefined,
+        };
+
         return this.userRepository.findAndCount({
+            where,
             order: { id: 'DESC' },
             take: limit,
             skip: limit * page - limit,
