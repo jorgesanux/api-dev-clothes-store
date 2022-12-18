@@ -17,6 +17,7 @@ import { ApiResponse } from '../../common/interface/api_response.interface';
 import { ApiQuery, ApiTags } from '@nestjs/swagger';
 import { OrderItemService } from '../service/order_item.service';
 import { OrderItem } from '../entity/order_item.entity';
+import { OrderItemQueryDTO } from '../dto/order_item_query.dto';
 
 @ApiTags('Order item')
 @Controller('orderItem')
@@ -25,18 +26,23 @@ export class OrderItemController {
 
     @ApiQuery({ name: 'limit', type: 'number', required: false })
     @ApiQuery({ name: 'page', type: 'number', required: false })
+    @ApiQuery({ name: 'productId', type: 'uuidv4', required: false })
+    @ApiQuery({ name: 'orderId', type: 'uuidv4', required: false })
+    @ApiQuery({ name: 'quantityInit', type: 'number', required: false })
+    @ApiQuery({ name: 'quantityEnd', type: 'number', required: false })
+    @ApiQuery({ name: 'totalValueInit', type: 'number', required: false })
+    @ApiQuery({ name: 'totalValueEnd', type: 'number', required: false })
+    @ApiQuery({ name: 'createdAtInit', type: 'datetime', required: false })
+    @ApiQuery({ name: 'createdAtEnd', type: 'datetime', required: false })
+    @ApiQuery({ name: 'updatedAtInit', type: 'datetime', required: false })
+    @ApiQuery({ name: 'updatedAtEnd', type: 'datetime', required: false })
     @Get('/')
     @HttpCode(HttpStatus.OK)
     async getAll(
-        @Query('limit') limit = Constant.controllerParams.LIMIT,
-        @Query('page') page = Constant.controllerParams.PAGE,
+        @Query() queryParams: OrderItemQueryDTO,
     ): Promise<ApiResponse<OrderItem>> {
-        if (limit <= 0) limit = Constant.controllerParams.LIMIT;
-        if (page <= 0) page = Constant.controllerParams.PAGE;
-
         const [orderItems, count] = await this.orderItemService.findAll(
-            limit,
-            page,
+            queryParams,
         );
 
         const response: ApiResponse<OrderItem> = {

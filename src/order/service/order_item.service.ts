@@ -6,11 +6,18 @@ import {
     NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DeleteResult, QueryFailedError, Repository } from 'typeorm';
+import {
+    Between,
+    DeleteResult,
+    FindOptionsWhere,
+    QueryFailedError,
+    Repository,
+} from 'typeorm';
 import { CreateOrderItemDTO, UpdateOrderItemDTO } from '../dto/order_item.dto';
 import { QueryFailedErrorHandler } from 'src/common/handler/query_failed_error.handler';
 import { OrderService } from './order.service';
 import { ProductService } from '../../product/service/product.service';
+import { OrderItemQueryDTO } from '../dto/order_item_query.dto';
 
 @Injectable()
 export class OrderItemService
@@ -26,12 +33,50 @@ export class OrderItemService
     ) {}
 
     async findAll(
-        limit: number,
-        page: number,
+        queryDTO: OrderItemQueryDTO,
         relations = this.relations,
     ): Promise<[OrderItem[], number]> {
+        const {
+            productId,
+            orderId,
+            quantityInit,
+            quantityEnd,
+            totalValueInit,
+            totalValueEnd,
+            updatedAtEnd,
+            updatedAtInit,
+            createdAtInit,
+            createdAtEnd,
+            page,
+            limit,
+        } = queryDTO;
+        const where: FindOptionsWhere<OrderItem> = {
+            product: productId
+                ? await this.productService.findOne(productId, [])
+                : undefined,
+            order: orderId
+                ? await this.orderService.findOne(orderId, [])
+                : undefined,
+            quantity:
+                quantityInit && quantityEnd
+                    ? Between(quantityInit, quantityEnd)
+                    : undefined,
+            totalValue:
+                totalValueInit && totalValueEnd
+                    ? Between(totalValueInit, totalValueEnd)
+                    : undefined,
+            updatedAt:
+                updatedAtInit && updatedAtEnd
+                    ? Between(updatedAtInit, updatedAtEnd)
+                    : undefined,
+            createdAt:
+                createdAtInit && createdAtEnd
+                    ? Between(createdAtInit, createdAtEnd)
+                    : undefined,
+        };
         return this.orderItemRepository.findAndCount({
             relations,
+            where,
             order: { id: 'DESC' },
             take: limit,
             skip: limit * page - limit,
