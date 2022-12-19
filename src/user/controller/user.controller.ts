@@ -4,88 +4,100 @@ import {
     Delete,
     Get,
     HttpCode,
-    HttpStatus, Inject,
+    HttpStatus,
     Param,
-    ParseIntPipe,
+    ParseUUIDPipe,
     Post,
     Put,
-    Query
-} from "@nestjs/common";
-import { CreateUserDTO, UpdateUserDTO } from 'src/user/dto/user.dto';
+    Query,
+} from '@nestjs/common';
+import { ApiQuery, ApiTags } from '@nestjs/swagger';
+
+import {
+    CreateUserDTO,
+    QueryUserDTO,
+    UpdateUserDTO,
+} from 'src/user/dto/user.dto';
 import { User } from 'src/user/entity/user.entity';
-import { ApiResponse } from 'src/common/interface/api-response.interface';
+import { ApiResponse } from 'src/common/interface/api_response.interface';
 import { UserService } from 'src/user/service/user.service';
 
-import config from "src/config";
-import { ConfigType } from "@nestjs/config";
-import { ConfigService } from "@nestjs/config";
-import { ApiTags } from "@nestjs/swagger";
-
-@ApiTags("User")
+@ApiTags('User')
 @Controller('user')
 export class UserController {
-    constructor(
-        private userService: UserService,
-        @Inject(config.KEY) private configProperties: ConfigType<typeof config>,
-        private configService: ConfigService
-    ) {}
+    constructor(private userService: UserService) {}
 
+    @ApiQuery({ name: 'limit', type: 'number', required: false })
+    @ApiQuery({ name: 'page', type: 'number', required: false })
+    @ApiQuery({ name: 'email', type: 'email', required: false })
+    @ApiQuery({ name: 'role', type: 'string', required: false })
+    @ApiQuery({ name: 'createdAtInit', type: 'datetime', required: false })
+    @ApiQuery({ name: 'createdAtEnd', type: 'datetime', required: false })
+    @ApiQuery({ name: 'updatedAtInit', type: 'datetime', required: false })
+    @ApiQuery({ name: 'updatedAtEnd', type: 'datetime', required: false })
     @Get('/')
     @HttpCode(HttpStatus.OK)
-    getAll(@Query('limit') limit = 10): ApiResponse<User> {
-        console.log(this.configProperties.database.postgresql.name);
-        console.log(this.configService.get("PS_NAME"));
+    async getAll(
+        @Query() queryParams: QueryUserDTO,
+    ): Promise<ApiResponse<User>> {
+        const [users, count] = await this.userService.findAll(queryParams);
+
         const response: ApiResponse<User> = {
             statusCode: HttpStatus.OK,
             message: 'OK',
-            results: this.userService.findAll(),
+            results: users,
+            count,
         };
         return response;
     }
 
     @Get('/:id')
     @HttpCode(HttpStatus.OK)
-    getById(@Param('id', ParseIntPipe) id: number): ApiResponse<User> {
+    async getById(
+        @Param('id', ParseUUIDPipe) id: string,
+    ): Promise<ApiResponse<User>> {
         const response: ApiResponse<User> = {
             message: 'OK',
             statusCode: HttpStatus.OK,
-            result: this.userService.findOne(id),
+            result: await this.userService.findOne(id),
         };
         return response;
     }
 
     @Post('/')
     @HttpCode(HttpStatus.CREATED)
-    create(@Body() body: CreateUserDTO): ApiResponse<User> {
+    async create(@Body() body: CreateUserDTO): Promise<ApiResponse<User>> {
         const response: ApiResponse<User> = {
             message: 'Created',
             statusCode: HttpStatus.CREATED,
-            result: this.userService.create(body),
+            result: await this.userService.create(body),
         };
         return response;
     }
 
     @Put('/:id')
     @HttpCode(HttpStatus.OK)
-    update(
-        @Param('id', ParseIntPipe) id: number,
+    async update(
+        @Param('id', ParseUUIDPipe) id: string,
         @Body() body: UpdateUserDTO,
-    ): ApiResponse<User> {
+    ): Promise<ApiResponse<User>> {
         const response: ApiResponse<User> = {
             message: 'Updated',
             statusCode: HttpStatus.OK,
-            result: this.userService.update(id, body),
+            result: await this.userService.update(id, body),
         };
         return response;
     }
 
     @Delete('/:id')
     @HttpCode(HttpStatus.OK)
-    delete(@Param('id', ParseIntPipe) id: number): ApiResponse<User> {
+    async delete(
+        @Param('id', ParseUUIDPipe) id: string,
+    ): Promise<ApiResponse<User>> {
         const response: ApiResponse<User> = {
             message: 'Deleted',
             statusCode: HttpStatus.OK,
-            result: this.userService.delete(id),
+            result: await this.userService.delete(id),
         };
         return response;
     }

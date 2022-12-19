@@ -1,7 +1,14 @@
-export interface BaseServiceInterface<T = any, Y = any> {
-    findAll(): T[];
-    findOne(id: Y): T;
-    create(payload: any): T;
-    update(id: Y, payload: any): T;
-    delete(id: Y): T;
+import { BaseEntity } from '../entity/base.entity';
+import { BaseQueryDTO } from '../dto/base_query.dto';
+
+export interface BaseServiceInterface<T extends BaseEntity = any, Y = any> {
+    relations?: string[] | Object;
+    findAll(
+        queryDTO: BaseQueryDTO,
+        relations?: string[] | Object,
+    ): [T[], number] | Promise<[T[], number]>;
+    findOne(id: Y, relations?: string[] | Object): T | Promise<T>;
+    create(payload: any): T | Promise<T>;
+    update(id: Y, payload: any): T | Promise<T>;
+    delete(id: Y): T | Promise<T>;
 }

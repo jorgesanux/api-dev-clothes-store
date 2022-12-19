@@ -1,48 +1,102 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { CreateUserDTO, UpdateUserDTO } from 'src/user/dto/user.dto';
-import { User } from 'src/user/entity/user.entity';
+import {
+    Injectable,
+    InternalServerErrorException,
+    NotFoundException,
+} from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import {
+    Between,
+    DeleteResult,
+    FindOptionsWhere,
+    QueryFailedError,
+    Repository,
+} from 'typeorm';
+
 import { BaseServiceInterface } from 'src/common/interface/base-service.interface';
+import { User } from 'src/user/entity/user.entity';
+import {
+    CreateUserDTO,
+    QueryUserDTO,
+    UpdateUserDTO,
+} from 'src/user/dto/user.dto';
+import { QueryFailedErrorHandler } from '../../common/handler/query_failed_error.handler';
 
 @Injectable()
-export class UserService implements BaseServiceInterface<User, number> {
-    private SEQUENCE = 0;
-    private users: User[] = [];
+export class UserService implements BaseServiceInterface<User, string> {
+    constructor(
+        @InjectRepository(User) private userRepository: Repository<User>,
+    ) {}
 
-    findAll(): User[] {
-        return this.users;
-    }
-
-    findOne(id: number): User {
-        const user: User = this.users.find((c) => c.id === id);
-        if (!user) {
-            throw new NotFoundException(`User with id ${id} not found`);
-        }
-        return user;
-    }
-
-    create(payload: CreateUserDTO): User {
-        this.SEQUENCE++;
-        const user: User = {
-            id: this.SEQUENCE,
-            ...payload,
+    async findAll(queryDTO: QueryUserDTO): Promise<[User[], number]> {
+        const {
+            role,
+            email,
+            limit,
+            createdAtEnd,
+            updatedAtEnd,
+            createdAtInit,
+            updatedAtInit,
+            page,
+        } = queryDTO;
+        const where: FindOptionsWhere<User> = {
+            email,
+            role,
+            updatedAt:
+                updatedAtInit && updatedAtEnd
+                    ? Between(updatedAtInit, updatedAtEnd)
+                    : undefined,
+            createdAt:
+                createdAtInit && createdAtEnd
+                    ? Between(createdAtInit, createdAtEnd)
+                    : undefined,
         };
-        this.users.push(user);
-        return user;
+
+        return this.userRepository.findAndCount({
+            where,
+            order: { id: 'DESC' },
+            take: limit,
+            skip: limit * page - limit,
+        });
     }
 
-    update(id: number, payload: UpdateUserDTO): User {
-        const userIndex = this.users.findIndex((c) => c.id === id);
-        if (userIndex < 0) {
-            throw new NotFoundException(`User with id ${id} not found`);
-        }
-        return Object.assign(this.users[userIndex], payload);
+    async findOne(id: string): Promise<User> {
+        const user: User = await this.userRepository.findOneBy({ id });
+        if (user !== null) return user;
+
+        throw new NotFoundException(`User with id ${id} not found`);
     }
 
-    delete(id: number): User {
-        const userIndex = this.users.findIndex((c) => c.id === id);
-        if (userIndex < 0) {
-            throw new NotFoundException(`User with id ${id} not found`);
+    async create(payload: CreateUserDTO): Promise<User> {
+        try {
+            const user: User = this.userRepository.create(payload);
+            return await this.userRepository.save(user);
+        } catch (e: unknown) {
+            if (e instanceof QueryFailedError)
+                QueryFailedErrorHandler.handle(e as QueryFailedError);
+            throw e;
         }
-        return this.users.splice(userIndex, 1)[0];
+    }
+
+    async update(id: string, payload: UpdateUserDTO): Promise<User> {
+        try {
+            const user: User = await this.findOne(id);
+            await this.userRepository.merge(user, payload);
+            return await this.userRepository.save(user);
+        } catch (e: unknown) {
+            if (e instanceof QueryFailedError)
+                QueryFailedErrorHandler.handle(e as QueryFailedError);
+            throw e;
+        }
+    }
+
+    async delete(id: string): Promise<User> {
+        const user: User = await this.findOne(id);
+        const result: DeleteResult = await this.userRepository.delete({
+            id: user.id,
+        });
+        if (result.affected > 0) return user;
+        throw new InternalServerErrorException(
+            `Can not delete the user with id ${id}`,
+        );
     }
 }

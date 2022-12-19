@@ -1,80 +1,103 @@
 import {
     Body,
     Controller,
+    Delete,
     Get,
     HttpCode,
     HttpStatus,
     Param,
-    ParseIntPipe,
+    ParseUUIDPipe,
+    Patch,
     Post,
-    Put,
     Query,
 } from '@nestjs/common';
-import { ApiResponse } from 'src/common/interface/api-response.interface';
-import { ProductService } from 'src/product/service/product.service';
-import { CustomerService } from 'src/user/service/customer.service';
-import { CreateOrderDTO, UpdateOrderDTO } from '../dto/order.dto';
+import { ApiResponse } from 'src/common/interface/api_response.interface';
+import {
+    CreateOrderDTO,
+    UpdateOrderDTO,
+    QueryOrderDTO,
+} from '../dto/order.dto';
 import { Order } from '../entity/order.entity';
 import { OrderService } from '../service/order.service';
-import { ApiTags } from "@nestjs/swagger";
+import { ApiQuery, ApiTags } from '@nestjs/swagger';
 
-@ApiTags("Order")
+@ApiTags('Order')
 @Controller('order')
 export class OrderController {
-    constructor(
-        private orderService: OrderService,
-        private customerService: CustomerService,
-        private productService: ProductService,
-    ) {}
+    constructor(private orderService: OrderService) {}
 
+    @ApiQuery({ name: 'limit', type: 'number', required: false })
+    @ApiQuery({ name: 'page', type: 'number', required: false })
+    @ApiQuery({ name: 'totalInit', type: 'number', required: false })
+    @ApiQuery({ name: 'totalEnd', type: 'number', required: false })
+    @ApiQuery({ name: 'observation', type: 'text', required: false })
+    @ApiQuery({ name: 'createdAtInit', type: 'datetime', required: false })
+    @ApiQuery({ name: 'createdAtEnd', type: 'datetime', required: false })
+    @ApiQuery({ name: 'updatedAtInit', type: 'datetime', required: false })
+    @ApiQuery({ name: 'updatedAtEnd', type: 'datetime', required: false })
     @Get('/')
     @HttpCode(HttpStatus.OK)
-    getAll(@Query('limit') limit = 10): ApiResponse<Order> {
+    async getAll(
+        @Query() queryParams: QueryOrderDTO,
+    ): Promise<ApiResponse<Order>> {
+        const [orders, count] = await this.orderService.findAll(queryParams);
+
         const response: ApiResponse<Order> = {
             statusCode: HttpStatus.OK,
             message: 'OK',
-            results: this.orderService.findAll(),
+            results: orders,
+            count,
         };
         return response;
     }
 
     @Get('/:id')
     @HttpCode(HttpStatus.OK)
-    getById(@Param('id', ParseIntPipe) id: number): ApiResponse<Order> {
+    async getById(
+        @Param('id', ParseUUIDPipe) id: string,
+    ): Promise<ApiResponse<Order>> {
         const response: ApiResponse<Order> = {
             message: 'OK',
             statusCode: HttpStatus.OK,
-            result: this.orderService.findOne(id),
+            result: await this.orderService.findOne(id),
         };
         return response;
     }
 
     @Post('/')
     @HttpCode(HttpStatus.CREATED)
-    create(@Body() body: CreateOrderDTO): ApiResponse<Order> {
-        const order: Order = new Order();
-        order.observation = body.observation;
-        order.customer = this.customerService.findOne(body.customerId);
-        order.products = this.productService.findMany(body.productsId);
-
+    async create(@Body() body: CreateOrderDTO): Promise<ApiResponse<Order>> {
         const response: ApiResponse<Order> = {
             message: 'Created',
             statusCode: HttpStatus.CREATED,
-            result: this.orderService.create(order),
+            result: await this.orderService.create(body),
         };
         return response;
     }
 
-    @Put('/:id')
+    @Patch('/:id')
     @HttpCode(HttpStatus.OK)
-    update(
-        @Param('id', ParseIntPipe) id: number,
+    async update(
+        @Param('id', ParseUUIDPipe) id: string,
         @Body() body: UpdateOrderDTO,
-    ): ApiResponse<Order> {
+    ): Promise<ApiResponse<Order>> {
         const response: ApiResponse<Order> = {
             message: 'Updated',
             statusCode: HttpStatus.OK,
-            result: this.orderService.update(id, body),
+            result: await this.orderService.update(id, body),
+        };
+        return response;
+    }
+
+    @Delete('/:id')
+    @HttpCode(HttpStatus.OK)
+    async delete(
+        @Param('id', ParseUUIDPipe) id: string,
+    ): Promise<ApiResponse<Order>> {
+        const response: ApiResponse<Order> = {
+            message: 'Deleted',
+            statusCode: HttpStatus.OK,
+            result: await this.orderService.delete(id),
         };
         return response;
     }

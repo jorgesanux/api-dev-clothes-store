@@ -1,24 +1,39 @@
 import { PartialType } from '@nestjs/swagger';
 import {
-    IsArray,
-    IsEmpty,
     IsNotEmpty,
     IsNumber,
+    IsOptional,
     IsString,
+    IsUUID,
+    ValidateIf,
 } from 'class-validator';
+import { BaseQueryDTO } from '../../common/dto/base_query.dto';
+import { Transform } from 'class-transformer';
 
 export class CreateOrderDTO {
     @IsString()
-    @IsEmpty()
+    @IsOptional()
     observation: string;
 
-    @IsNumber()
+    @IsUUID()
     @IsNotEmpty()
-    customerId: number;
-
-    @IsArray()
-    @IsNotEmpty()
-    productsId: number[];
+    customerId: string;
 }
 
 export class UpdateOrderDTO extends PartialType(CreateOrderDTO) {}
+
+export class QueryOrderDTO extends BaseQueryDTO {
+    @ValidateIf((order) => order.totalEnd)
+    @Transform(({ value }) => Number(value))
+    @IsNumber()
+    totalInit?: number;
+
+    @ValidateIf((order) => order.totalInit)
+    @Transform(({ value }) => Number(value))
+    @IsNumber()
+    totalEnd?: number;
+
+    @IsString()
+    @IsOptional()
+    observation?: string;
+}

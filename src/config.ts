@@ -1,17 +1,17 @@
-import { registerAs } from "@nestjs/config";
+import { registerAs } from '@nestjs/config';
+import { Constant } from './common/constant';
 
-export default registerAs('config', ()=> {
+export default registerAs(Constant.providerKeys.ENV_CONFIG, () => {
     return {
         database: {
             postgresql: {
-                name: process.env.PS_NAME,
-                port: process.env.PS_PORT,
-            }
+                host: process.env.PG_HOST,
+                port: Number(process.env.PG_PORT),
+                database: process.env.PG_DATABASE,
+                user: process.env.PG_USER,
+                pass: process.env.PG_PASS,
+                ssl: process.env.PG_SSL === 'true',
+            },
         },
-        api: {
-            geoloc: {
-                key: process.env.API_KEY
-            }
-        }
     };
 });
