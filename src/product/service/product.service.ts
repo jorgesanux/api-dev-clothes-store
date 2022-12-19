@@ -11,8 +11,8 @@ import {
     FindOptionsWhere,
     Like,
     QueryFailedError,
-    Repository
-} from "typeorm";
+    Repository,
+} from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import {
@@ -61,10 +61,10 @@ export class ProductService implements BaseServiceInterface<Product, string> {
         } = queryDTO;
         const where: FindOptionsWhere<Product> = {
             brand: {
-                id: brandId || undefined
+                id: brandId || undefined,
             },
             categories: {
-                id: categoryId || undefined
+                id: categoryId || undefined,
             },
             price:
                 priceInit && priceEnd

@@ -1,8 +1,8 @@
-import { Column, Entity, Index, JoinColumn, OneToOne } from "typeorm";
+import { Column, Entity, Index, JoinColumn, OneToOne } from 'typeorm';
 import { BaseEntity } from '../../common/entity/base.entity';
 import { User } from './user.entity';
 import { Order } from '../../order/entity/order.entity';
-import { Exclude, Expose } from "class-transformer";
+import { Exclude, Expose } from 'class-transformer';
 
 @Entity('customer')
 @Index(['name', 'lastName'])
@@ -37,7 +37,7 @@ export class Customer extends BaseEntity {
     order: Order;
 
     @Expose()
-    get fullName(): string{
+    get fullName(): string {
         return `${this.name} ${this.lastName}`;
     }
 

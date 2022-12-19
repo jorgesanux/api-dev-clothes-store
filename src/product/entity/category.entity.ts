@@ -1,10 +1,11 @@
 import {
     Column,
-    Entity, Index,
+    Entity,
+    Index,
     JoinColumn,
     ManyToMany,
-    PrimaryGeneratedColumn
-} from "typeorm";
+    PrimaryGeneratedColumn,
+} from 'typeorm';
 import { BaseEntity } from '../../common/entity/base.entity';
 import { Product } from './product.entity';
 

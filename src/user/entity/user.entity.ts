@@ -1,7 +1,13 @@
-import { Column, Entity, Index, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import {
+    Column,
+    Entity,
+    Index,
+    OneToOne,
+    PrimaryGeneratedColumn,
+} from 'typeorm';
 import { BaseEntity } from '../../common/entity/base.entity';
 import { Customer } from './customer.entity';
-import { Exclude } from "class-transformer";
+import { Exclude } from 'class-transformer';
 
 @Entity('users')
 export class User extends BaseEntity {

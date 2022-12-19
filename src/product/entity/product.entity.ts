@@ -1,11 +1,12 @@
 import {
     Column,
-    Entity, Index,
+    Entity,
+    Index,
     JoinColumn,
     JoinTable,
     ManyToMany,
-    ManyToOne
-} from "typeorm";
+    ManyToOne,
+} from 'typeorm';
 import { BaseEntity } from '../../common/entity/base.entity';
 import { Brand } from './brand.entity';
 import { Category } from './category.entity';

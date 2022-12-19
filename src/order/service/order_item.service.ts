@@ -55,10 +55,10 @@ export class OrderItemService
         } = queryDTO;
         const where: FindOptionsWhere<OrderItem> = {
             product: {
-                id: productId || undefined
+                id: productId || undefined,
             },
             order: {
-                id: orderId || undefined
+                id: orderId || undefined,
             },
             quantity:
                 quantityInit && quantityEnd

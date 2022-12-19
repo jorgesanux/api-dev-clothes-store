@@ -59,7 +59,7 @@ export class CustomerService implements BaseServiceInterface<Customer, string> {
             address: address ? Like(`%${address}%`) : undefined,
             phone: phone ? Like(`%${phone}%`) : undefined,
             user: {
-                id: userId || undefined
+                id: userId || undefined,
             },
             updatedAt:
                 updatedAtInit && updatedAtEnd
