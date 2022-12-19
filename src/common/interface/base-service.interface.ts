@@ -3,11 +3,6 @@ import { BaseQueryDTO } from '../dto/base_query.dto';
 
 export interface BaseServiceInterface<T extends BaseEntity = any, Y = any> {
     relations?: string[] | Object;
-    // findAll(
-    //     limit?: number,
-    //     page?: number,
-    //     relations?: string[] | Object,
-    // ): [T[], number] | Promise<[T[], number]>;
     findAll(
         queryDTO: BaseQueryDTO,
         relations?: string[] | Object,

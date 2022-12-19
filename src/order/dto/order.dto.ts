@@ -26,13 +26,11 @@ export class QueryOrderDTO extends BaseQueryDTO {
     @ValidateIf((order) => order.totalEnd)
     @Transform(({ value }) => Number(value))
     @IsNumber()
-    // @IsOptional()
     totalInit?: number;
 
     @ValidateIf((order) => order.totalInit)
     @Transform(({ value }) => Number(value))
     @IsNumber()
-    // @IsOptional()
     totalEnd?: number;
 
     @IsString()
