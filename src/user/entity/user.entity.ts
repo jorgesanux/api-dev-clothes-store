@@ -1,6 +1,7 @@
 import { Column, Entity, Index, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import { BaseEntity } from '../../common/entity/base.entity';
 import { Customer } from './customer.entity';
+import { Exclude } from "class-transformer";
 
 @Entity('users')
 export class User extends BaseEntity {
@@ -9,6 +10,7 @@ export class User extends BaseEntity {
     email: string;
 
     @Column({ type: 'text' })
+    @Exclude()
     password: string; //TODO: Add ecryptation
 
     @Column({ type: 'varchar', length: 50 })
