@@ -67,6 +67,15 @@ export class UserService implements BaseServiceInterface<User, string> {
         throw new NotFoundException(`User with id ${id} not found`);
     }
 
+    async findByEmail(email: string): Promise<User> {
+        const user: User = await this.userRepository.findOne({
+            where: { email }
+        });
+        if (user !== null) return user;
+
+        throw new NotFoundException(`User with email ${email} not found`);
+    }
+
     async create(payload: CreateUserDTO): Promise<User> {
         try {
             const user: User = this.userRepository.create(payload);
