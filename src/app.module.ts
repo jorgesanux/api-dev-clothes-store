@@ -10,6 +10,7 @@ import { OrderModule } from './order/order.module';
 import { DatabaseModule } from './database/database.module';
 import config from './config';
 import { APP_INTERCEPTOR } from '@nestjs/core';
+import { AuthModule } from './auth/auth.module';
 
 const providerClassSerializerInterceptor: Provider<ClassSerializerInterceptor> =
     {
@@ -37,6 +38,7 @@ const providerClassSerializerInterceptor: Provider<ClassSerializerInterceptor> =
         ProductModule,
         OrderModule,
         DatabaseModule,
+        AuthModule,
     ],
     controllers: [AppController],
     providers: [providerClassSerializerInterceptor, AppService],
