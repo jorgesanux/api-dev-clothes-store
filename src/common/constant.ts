@@ -14,7 +14,7 @@ class ControllerParam {
 }
 
 class MetadataName {
-    PUBLIC_ENDPOINT = "isPublicEndpoint";
+    PUBLIC_ENDPOINT = 'isPublicEndpoint';
 }
 
 export class Constant {
