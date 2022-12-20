@@ -17,9 +17,14 @@ class MetadataName {
     PUBLIC_ENDPOINT = 'isPublicEndpoint';
 }
 
+class AuthParam {
+    ROUNDS_HASH_PASSWORD = 10
+}
+
 export class Constant {
     static providerKeys: ProviderKey = new ProviderKey();
     static dbDriverErrors: DBDriverError = new DBDriverError();
     static controllerParams: ControllerParam = new ControllerParam();
     static metadataNames: MetadataName = new MetadataName();
+    static authParams: AuthParam = new AuthParam();
 }

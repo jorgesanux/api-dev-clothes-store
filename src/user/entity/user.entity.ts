@@ -15,9 +15,9 @@ export class User extends BaseEntity {
     @Index()
     email: string;
 
-    @Column({ type: 'text' })
+    @Column({ type: 'bytea' })
     @Exclude()
-    password: string; //TODO: Add ecryptation
+    password: string;
 
     @Column({ type: 'varchar', length: 50 })
     @Index()

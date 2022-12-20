@@ -20,6 +20,7 @@ import {
     UpdateUserDTO,
 } from 'src/user/dto/user.dto';
 import { QueryFailedErrorHandler } from '../../common/handler/query_failed_error.handler';
+import { AuthHelper } from "../../common/helper/auth.helper";
 
 @Injectable()
 export class UserService implements BaseServiceInterface<User, string> {
@@ -69,6 +70,7 @@ export class UserService implements BaseServiceInterface<User, string> {
     async create(payload: CreateUserDTO): Promise<User> {
         try {
             const user: User = this.userRepository.create(payload);
+            user.password = await AuthHelper.hashPassword(payload.password);
             return await this.userRepository.save(user);
         } catch (e: unknown) {
             if (e instanceof QueryFailedError)
