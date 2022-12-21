@@ -12,7 +12,7 @@ import {
     Repository,
 } from 'typeorm';
 
-import { BaseServiceInterface } from 'src/common/interface/base-service.interface';
+import { IBaseCRUDService } from 'src/common/interface/base_crud_service.interface';
 import { User } from 'src/user/entity/user.entity';
 import {
     CreateUserDTO,
@@ -23,7 +23,7 @@ import { QueryFailedErrorHandler } from '../../common/handler/query_failed_error
 import { AuthHelper } from "../../common/helper/auth.helper";
 
 @Injectable()
-export class UserService implements BaseServiceInterface<User, string> {
+export class UserService implements IBaseCRUDService<User, string> {
     constructor(
         @InjectRepository(User) private userRepository: Repository<User>,
     ) {}

@@ -1,7 +1,7 @@
 import { BaseEntity } from '../entity/base.entity';
 import { BaseQueryDTO } from '../dto/base_query.dto';
 
-export interface BaseServiceInterface<T extends BaseEntity = any, Y = any> {
+export interface IBaseCRUDService<T extends BaseEntity = any, Y = any> {
     relations?: string[] | Object;
     findAll(
         queryDTO: BaseQueryDTO,

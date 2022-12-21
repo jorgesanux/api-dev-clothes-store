@@ -1,4 +1,4 @@
-import { BaseServiceInterface } from '../../common/interface/base-service.interface';
+import { IBaseCRUDService } from '../../common/interface/base_crud_service.interface';
 import { OrderItem } from '../entity/order_item.entity';
 import {
     Injectable,
@@ -24,7 +24,7 @@ import { ProductService } from '../../product/service/product.service';
 
 @Injectable()
 export class OrderItemService
-    implements BaseServiceInterface<OrderItem, string>
+    implements IBaseCRUDService<OrderItem, string>
 {
     relations: string[] = ['order', 'product'];
 
