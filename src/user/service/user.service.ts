@@ -21,6 +21,7 @@ import {
 } from 'src/user/dto/user.dto';
 import { QueryFailedErrorHandler } from '../../common/handler/query_failed_error.handler';
 import { AuthHelper } from '../../common/helper/auth.helper';
+import { CastHelper } from '../../common/helper/cast.helper';
 
 @Injectable()
 export class UserService implements IBaseCRUDService<User, string> {
@@ -78,8 +79,13 @@ export class UserService implements IBaseCRUDService<User, string> {
 
     async create(payload: CreateUserDTO): Promise<User> {
         try {
-            const user: User = this.userRepository.create(payload);
-            user.password = await AuthHelper.hashPassword(payload.password);
+            // const user: User = this.userRepository.create(payload);
+            const user: User = new User();
+            user.email = payload.email;
+            user.role = payload.role;
+            user.password = CastHelper.StringToBuffer(
+                await AuthHelper.hashPassword(payload.password),
+            );
             return await this.userRepository.save(user);
         } catch (e: unknown) {
             if (e instanceof QueryFailedError)
@@ -91,7 +97,15 @@ export class UserService implements IBaseCRUDService<User, string> {
     async update(id: string, payload: UpdateUserDTO): Promise<User> {
         try {
             const user: User = await this.findOne(id);
-            await this.userRepository.merge(user, payload);
+            // if(Object.keys(payload).length <= 0) return user;
+
+            if (payload.email) user.email = payload.email;
+            if (payload.role) user.role = payload.role;
+            if (payload.password)
+                user.password = CastHelper.StringToBuffer(
+                    await AuthHelper.hashPassword(payload.password),
+                );
+
             return await this.userRepository.save(user);
         } catch (e: unknown) {
             if (e instanceof QueryFailedError)

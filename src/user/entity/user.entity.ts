@@ -17,7 +17,7 @@ export class User extends BaseEntity {
 
     @Column({ type: 'bytea' })
     @Exclude()
-    password: string;
+    password: Buffer;
 
     @Column({ type: 'varchar', length: 50 })
     @Index()
