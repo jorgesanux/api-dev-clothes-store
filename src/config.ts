@@ -1,6 +1,6 @@
 import { registerAs } from '@nestjs/config';
 import { Constant } from './common/constant';
-import * as process from "process";
+import * as process from 'process';
 
 export default registerAs(Constant.providerKeys.ENV_CONFIG, () => {
     return {
@@ -15,9 +15,9 @@ export default registerAs(Constant.providerKeys.ENV_CONFIG, () => {
             },
         },
         api: {
-            testApi:{
-                apikey: process.env.API_KEY
-            }
-        }
+            testApi: {
+                apikey: process.env.API_KEY,
+            },
+        },
     };
 });

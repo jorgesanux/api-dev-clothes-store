@@ -23,9 +23,7 @@ import { OrderService } from './order.service';
 import { ProductService } from '../../product/service/product.service';
 
 @Injectable()
-export class OrderItemService
-    implements IBaseCRUDService<OrderItem, string>
-{
+export class OrderItemService implements IBaseCRUDService<OrderItem, string> {
     relations: string[] = ['order', 'product'];
 
     constructor(

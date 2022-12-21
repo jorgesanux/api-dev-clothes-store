@@ -1,16 +1,21 @@
-import { CanActivate, ExecutionContext, Inject, Injectable } from "@nestjs/common";
+import {
+    CanActivate,
+    ExecutionContext,
+    Inject,
+    Injectable,
+} from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { Request } from 'express';
 import { Reflector } from '@nestjs/core';
 import { Constant } from '../../common/constant';
-import config from "../../config";
-import { ConfigType } from "@nestjs/config";
+import config from '../../config';
+import { ConfigType } from '@nestjs/config';
 
 @Injectable()
 export class ApiKeyGuard implements CanActivate {
     constructor(
         private reflector: Reflector,
-        @Inject(config.KEY) private configService: ConfigType<typeof config>
+        @Inject(config.KEY) private configService: ConfigType<typeof config>,
     ) {}
 
     canActivate(

@@ -20,7 +20,7 @@ import {
     UpdateUserDTO,
 } from 'src/user/dto/user.dto';
 import { QueryFailedErrorHandler } from '../../common/handler/query_failed_error.handler';
-import { AuthHelper } from "../../common/helper/auth.helper";
+import { AuthHelper } from '../../common/helper/auth.helper';
 
 @Injectable()
 export class UserService implements IBaseCRUDService<User, string> {
@@ -69,7 +69,7 @@ export class UserService implements IBaseCRUDService<User, string> {
 
     async findByEmail(email: string): Promise<User> {
         const user: User = await this.userRepository.findOne({
-            where: { email }
+            where: { email },
         });
         if (user !== null) return user;
 
