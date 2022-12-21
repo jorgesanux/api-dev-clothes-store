@@ -33,6 +33,7 @@ const providerClassSerializerInterceptor: Provider<ClassSerializerInterceptor> =
                 PG_PASS: Joi.string().required(),
                 PG_SSL: Joi.boolean().required(),
                 API_KEY: Joi.string().required(),
+                JWT_SECRET: Joi.string().required(),
             }),
         }),
         UserModule,

@@ -14,6 +14,9 @@ export default registerAs(Constant.providerKeys.ENV_CONFIG, () => {
                 ssl: process.env.PG_SSL === 'true',
             },
         },
+        jwt: {
+            secret: process.env.JWT_SECRET,
+        },
         api: {
             testApi: {
                 apikey: process.env.API_KEY,
