@@ -42,7 +42,6 @@ const configModule: DynamicModule = ConfigModule.forRoot({
         PG_USER: Joi.string().required(),
         PG_PASS: Joi.string().required(),
         PG_SSL: Joi.boolean().required(),
-        API_KEY: Joi.string().required(),
         JWT_SECRET: Joi.string().required(),
     }),
 });

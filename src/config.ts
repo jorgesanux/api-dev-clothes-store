@@ -16,11 +16,6 @@ export default registerAs(Constant.providerKeys.ENV_CONFIG, () => {
         },
         jwt: {
             secret: process.env.JWT_SECRET,
-        },
-        api: {
-            testApi: {
-                apikey: process.env.API_KEY,
-            },
-        },
+        }
     };
 });
