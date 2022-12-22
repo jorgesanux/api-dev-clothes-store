@@ -9,17 +9,21 @@ import {
     ParseUUIDPipe,
     Patch,
     Post,
-    Query
-} from "@nestjs/common";
-import { ApiQuery, ApiTags } from "@nestjs/swagger";
+    Query,
+} from '@nestjs/common';
+import { ApiQuery, ApiTags } from '@nestjs/swagger';
 
-import { Product } from "src/product/entity/product.entity";
-import { CreateProductDTO, QueryProductDTO, UpdateProductDTO } from "src/product/dto/product.dto";
-import { ProductService } from "src/product/service/product.service";
-import { ApiResponse } from "src/common/interface/api_response.interface";
-import { Public } from "../../auth/decorator/public.decorator";
-import { Roles } from "../../auth/decorator/roles.decorator";
-import { Role } from "../../auth/model/role.model";
+import { Product } from 'src/product/entity/product.entity';
+import {
+    CreateProductDTO,
+    QueryProductDTO,
+    UpdateProductDTO,
+} from 'src/product/dto/product.dto';
+import { ProductService } from 'src/product/service/product.service';
+import { ApiResponse } from 'src/common/interface/api_response.interface';
+import { Public } from '../../auth/decorator/public.decorator';
+import { Roles } from '../../auth/decorator/roles.decorator';
+import { Role } from '../../auth/model/role.model';
 
 @ApiTags('Product')
 @Controller('product')
