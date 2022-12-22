@@ -17,6 +17,7 @@ import config from './config';
 import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { AuthModule } from './auth/auth.module';
 import { JwtAuthGuard } from './auth/guard/jwt_auth.guard';
+import { RolesGuard } from './auth/guard/roles.guard';
 
 /* Providers */
 const providerClassSerializerInterceptor: Provider<ClassSerializerInterceptor> =
@@ -32,6 +33,15 @@ const providerClassSerializerInterceptor: Provider<ClassSerializerInterceptor> =
 const providerJwtAuthGuard: Provider<JwtAuthGuard> = {
     provide: APP_GUARD,
     useClass: JwtAuthGuard,
+};
+
+/***
+     Provider to apply the RolesGuard to all application.
+     Use the @Roles() decorator to add roles to something.
+ ***/
+const providerRolesGuard: Provider<RolesGuard> = {
+    provide: APP_GUARD,
+    useClass: RolesGuard,
 };
 
 /* Modules */
@@ -64,6 +74,7 @@ const configModule: DynamicModule = ConfigModule.forRoot({
     providers: [
         providerClassSerializerInterceptor,
         providerJwtAuthGuard,
+        providerRolesGuard,
         AppService,
     ],
 })

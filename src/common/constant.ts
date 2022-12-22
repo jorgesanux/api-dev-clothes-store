@@ -15,6 +15,7 @@ class ControllerParam {
 
 class MetadataName {
     IS_PUBLIC = 'isPublic';
+    ROLE = 'role';
 }
 
 class AuthParam {
