@@ -14,7 +14,7 @@ class ControllerParam {
 }
 
 class MetadataName {
-    PUBLIC_ENDPOINT = 'isPublicEndpoint';
+    IS_PUBLIC = 'isPublic';
 }
 
 class AuthParam {

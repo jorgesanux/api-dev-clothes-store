@@ -9,8 +9,8 @@ import {
     ParseUUIDPipe,
     Post,
     Put,
-    Query,
-} from '@nestjs/common';
+    Query, UseGuards
+} from "@nestjs/common";
 import { ApiQuery, ApiTags } from '@nestjs/swagger';
 
 import {
@@ -21,7 +21,7 @@ import {
 import { Customer } from 'src/user/entity/customer.entity';
 import { ApiResponse } from 'src/common/interface/api_response.interface';
 import { CustomerService } from 'src/user/service/customer.service';
-import { Constant } from 'src/common/constant';
+import { Public } from "../../auth/decorator/public.decorator";
 
 @ApiTags('Customer')
 @Controller('customer')
@@ -40,6 +40,7 @@ export class CustomerController {
     @ApiQuery({ name: 'createdAtEnd', type: 'datetime', required: false })
     @ApiQuery({ name: 'updatedAtInit', type: 'datetime', required: false })
     @ApiQuery({ name: 'updatedAtEnd', type: 'datetime', required: false })
+    @Public()
     @Get('/')
     @HttpCode(HttpStatus.OK)
     async getAll(
@@ -58,6 +59,7 @@ export class CustomerController {
         return response;
     }
 
+    @Public()
     @Get('/:id')
     @HttpCode(HttpStatus.OK)
     async getById(
