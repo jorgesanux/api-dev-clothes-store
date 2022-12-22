@@ -4,7 +4,9 @@ import { AuthService } from '../service/auth.service';
 import { JWTResponseModel } from '../model/jwt_response.model';
 import { JwtAuthGuard } from "../guard/jwt_auth.guard";
 import { User } from "../../user/entity/user.entity";
+import { ApiTags } from "@nestjs/swagger";
 
+@ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
     constructor(private authService: AuthService) {}
