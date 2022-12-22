@@ -6,27 +6,24 @@ import {
     HttpCode,
     HttpStatus,
     Param,
-    ParseIntPipe,
     ParseUUIDPipe,
     Post,
     Put,
-    Query,
-} from '@nestjs/common';
-import { ApiQuery, ApiTags } from '@nestjs/swagger';
+    Query
+} from "@nestjs/common";
+import { ApiQuery, ApiTags } from "@nestjs/swagger";
 
-import { ApiResponse } from 'src/common/interface/api_response.interface';
-import { Category } from 'src/product/entity/category.entity';
-import { CategoryService } from 'src/product/service/category.service';
-import {
-    CreateCategoryDTO,
-    QueryCategoryDTO,
-    UpdateCategoryDTO,
-} from 'src/product/dto/category.dto';
-import { Constant } from 'src/common/constant';
-import { Public } from '../../auth/decorator/public.decorator';
+import { ApiResponse } from "src/common/interface/api_response.interface";
+import { Category } from "src/product/entity/category.entity";
+import { CategoryService } from "src/product/service/category.service";
+import { CreateCategoryDTO, QueryCategoryDTO, UpdateCategoryDTO } from "src/product/dto/category.dto";
+import { Public } from "../../auth/decorator/public.decorator";
+import { Roles } from "../../auth/decorator/roles.decorator";
+import { Role } from "../../auth/model/role.model";
 
 @ApiTags('Category')
 @Controller('category')
+@Roles([Role.ADMIN])
 export class CategoryController {
     constructor(private categoryService: CategoryService) {}
 

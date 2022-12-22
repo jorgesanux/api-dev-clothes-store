@@ -6,7 +6,6 @@ import {
     HttpCode,
     HttpStatus,
     Param,
-    ParseIntPipe,
     ParseUUIDPipe,
     Post,
     Put,
@@ -16,16 +15,19 @@ import { ApiQuery, ApiTags } from '@nestjs/swagger';
 
 import {
     CreateBrandDTO,
-    UpdateBrandDTO,
     QueryBrandDTO,
+    UpdateBrandDTO,
 } from 'src/product/dto/brand.dto';
 import { Brand } from 'src/product/entity/brand.entity';
 import { ApiResponse } from 'src/common/interface/api_response.interface';
 import { BrandService } from 'src/product/service/brand.service';
 import { Public } from '../../auth/decorator/public.decorator';
+import { Roles } from '../../auth/decorator/roles.decorator';
+import { Role } from '../../auth/model/role.model';
 
 @ApiTags('Brand')
 @Controller('brand')
+@Roles([Role.ADMIN])
 export class BrandController {
     constructor(private brandService: BrandService) {}
 

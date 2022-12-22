@@ -10,7 +10,6 @@ import {
     Post,
     Put,
     Query,
-    UseGuards,
 } from '@nestjs/common';
 import { ApiQuery, ApiTags } from '@nestjs/swagger';
 
@@ -22,10 +21,12 @@ import {
 import { Customer } from 'src/user/entity/customer.entity';
 import { ApiResponse } from 'src/common/interface/api_response.interface';
 import { CustomerService } from 'src/user/service/customer.service';
-import { Public } from '../../auth/decorator/public.decorator';
+import { Roles } from '../../auth/decorator/roles.decorator';
+import { Role } from '../../auth/model/role.model';
 
 @ApiTags('Customer')
 @Controller('customer')
+@Roles([Role.ADMIN])
 export class CustomerController {
     constructor(private customerService: CustomerService) {}
 
