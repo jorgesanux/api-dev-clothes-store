@@ -22,10 +22,11 @@ export class AuthService {
 
             const isValidPassword: boolean = await AuthHelper.comparePassword(
                 password,
-                CastHelper.BufferToString(user?.password),
+                CastHelper.BufferToString(user.password),
             );
             if (!isValidPassword) return null;
 
+            delete user.password;
             return user;
         } catch (e: unknown) {
             if (e instanceof NotFoundException) return null;
@@ -35,9 +36,8 @@ export class AuthService {
 
     generateToken(user: User): JWTResponseModel {
         const payload: JWTPayloadModel = {
-            email: user.email,
             sub: user.id,
-            role: user.role,
+            user
         };
         const token: string = this.jwtService.sign(payload);
         const decodedToken: JWTPayloadModel = this.jwtService.decode(token, {

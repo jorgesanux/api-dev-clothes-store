@@ -8,6 +8,7 @@ import { JwtModule } from '@nestjs/jwt';
 import config from '../config';
 import { ConfigType } from '@nestjs/config';
 import { JwtModuleOptions } from '@nestjs/jwt/dist/interfaces/jwt-module-options.interface';
+import { JwtStrategy } from "./strategy/jwt.strategy";
 
 const jwtModule: DynamicModule = JwtModule.registerAsync({
     useFactory: async (
@@ -24,8 +25,9 @@ const jwtModule: DynamicModule = JwtModule.registerAsync({
 });
 
 @Module({
-    providers: [AuthService, LocalStrategy],
+    providers: [AuthService, LocalStrategy, JwtStrategy],
     imports: [UserModule, PassportModule, jwtModule],
     controllers: [AuthController],
+    exports: [JwtStrategy],
 })
 export class AuthModule {}

@@ -1,7 +1,8 @@
+import { User } from "../../user/entity/user.entity";
+
 export interface JWTPayloadModel {
     sub: string;
-    email: string;
-    role: string;
+    user: User;
     exp?: number;
     iat?: number;
 }
