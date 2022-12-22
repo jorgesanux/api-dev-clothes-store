@@ -16,7 +16,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
             } else if(info instanceof JsonWebTokenError || info instanceof SyntaxError){
                 throw new BadRequestException(info.message);
             }
-            throw err || new UnauthorizedException();
+            throw err || new UnauthorizedException(info && info?.message);
         }
 
         return user;
