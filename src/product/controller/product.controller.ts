@@ -23,7 +23,7 @@ import {
 import { ProductService } from 'src/product/service/product.service';
 import { ApiResponse } from 'src/common/interface/api_response.interface';
 import { Constant } from 'src/common/constant';
-import { Public } from "../../auth/decorator/public.decorator";
+import { Public } from '../../auth/decorator/public.decorator';
 
 @ApiTags('Product')
 @Controller('product')

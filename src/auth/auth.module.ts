@@ -8,7 +8,7 @@ import { JwtModule } from '@nestjs/jwt';
 import config from '../config';
 import { ConfigType } from '@nestjs/config';
 import { JwtModuleOptions } from '@nestjs/jwt/dist/interfaces/jwt-module-options.interface';
-import { JwtStrategy } from "./strategy/jwt.strategy";
+import { JwtStrategy } from './strategy/jwt.strategy';
 
 const jwtModule: DynamicModule = JwtModule.registerAsync({
     useFactory: async (

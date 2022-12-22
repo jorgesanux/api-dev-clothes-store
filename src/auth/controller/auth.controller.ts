@@ -1,10 +1,10 @@
-import { Controller, Get, Post, Request, UseGuards } from "@nestjs/common";
+import { Controller, Get, Post, Request, UseGuards } from '@nestjs/common';
 import { LocalAuthGuard } from '../guard/local_auth.guard';
 import { AuthService } from '../service/auth.service';
 import { JWTResponseModel } from '../model/jwt_response.model';
-import { User } from "../../user/entity/user.entity";
-import { ApiTags } from "@nestjs/swagger";
-import { Public } from "../decorator/public.decorator";
+import { User } from '../../user/entity/user.entity';
+import { ApiTags } from '@nestjs/swagger';
+import { Public } from '../decorator/public.decorator';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -18,7 +18,7 @@ export class AuthController {
     }
 
     @Get('/profile')
-    async getProfile(@Request() req): Promise<User>{
+    async getProfile(@Request() req): Promise<User> {
         return req.user;
     }
 }

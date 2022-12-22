@@ -1,4 +1,9 @@
-import { ClassSerializerInterceptor, DynamicModule, Module, Provider } from "@nestjs/common";
+import {
+    ClassSerializerInterceptor,
+    DynamicModule,
+    Module,
+    Provider,
+} from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import * as Joi from 'joi';
 
@@ -9,9 +14,9 @@ import { ProductModule } from './product/product.module';
 import { OrderModule } from './order/order.module';
 import { DatabaseModule } from './database/database.module';
 import config from './config';
-import { APP_GUARD, APP_INTERCEPTOR } from "@nestjs/core";
+import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { AuthModule } from './auth/auth.module';
-import { JwtAuthGuard } from "./auth/guard/jwt_auth.guard";
+import { JwtAuthGuard } from './auth/guard/jwt_auth.guard';
 
 /* Providers */
 const providerClassSerializerInterceptor: Provider<ClassSerializerInterceptor> =
@@ -26,7 +31,7 @@ const providerClassSerializerInterceptor: Provider<ClassSerializerInterceptor> =
 ***/
 const providerJwtAuthGuard: Provider<JwtAuthGuard> = {
     provide: APP_GUARD,
-    useClass: JwtAuthGuard
+    useClass: JwtAuthGuard,
 };
 
 /* Modules */
@@ -56,6 +61,10 @@ const configModule: DynamicModule = ConfigModule.forRoot({
         AuthModule,
     ],
     controllers: [AppController],
-    providers: [providerClassSerializerInterceptor, providerJwtAuthGuard, AppService],
+    providers: [
+        providerClassSerializerInterceptor,
+        providerJwtAuthGuard,
+        AppService,
+    ],
 })
 export class AppModule {}

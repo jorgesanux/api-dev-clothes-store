@@ -22,7 +22,7 @@ import {
 import { Brand } from 'src/product/entity/brand.entity';
 import { ApiResponse } from 'src/common/interface/api_response.interface';
 import { BrandService } from 'src/product/service/brand.service';
-import { Public } from "../../auth/decorator/public.decorator";
+import { Public } from '../../auth/decorator/public.decorator';
 
 @ApiTags('Brand')
 @Controller('brand')

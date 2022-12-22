@@ -37,7 +37,7 @@ export class AuthService {
     generateToken(user: User): JWTResponseModel {
         const payload: JWTPayloadModel = {
             sub: user.id,
-            user
+            user,
         };
         const token: string = this.jwtService.sign(payload);
         const decodedToken: JWTPayloadModel = this.jwtService.decode(token, {

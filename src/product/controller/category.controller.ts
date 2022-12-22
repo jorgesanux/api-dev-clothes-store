@@ -23,7 +23,7 @@ import {
     UpdateCategoryDTO,
 } from 'src/product/dto/category.dto';
 import { Constant } from 'src/common/constant';
-import { Public } from "../../auth/decorator/public.decorator";
+import { Public } from '../../auth/decorator/public.decorator';
 
 @ApiTags('Category')
 @Controller('category')
