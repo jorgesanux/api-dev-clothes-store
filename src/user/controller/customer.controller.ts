@@ -40,7 +40,6 @@ export class CustomerController {
     @ApiQuery({ name: 'createdAtEnd', type: 'datetime', required: false })
     @ApiQuery({ name: 'updatedAtInit', type: 'datetime', required: false })
     @ApiQuery({ name: 'updatedAtEnd', type: 'datetime', required: false })
-    @Public()
     @Get('/')
     @HttpCode(HttpStatus.OK)
     async getAll(
@@ -59,7 +58,6 @@ export class CustomerController {
         return response;
     }
 
-    @Public()
     @Get('/:id')
     @HttpCode(HttpStatus.OK)
     async getById(

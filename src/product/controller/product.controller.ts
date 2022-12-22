@@ -23,6 +23,7 @@ import {
 import { ProductService } from 'src/product/service/product.service';
 import { ApiResponse } from 'src/common/interface/api_response.interface';
 import { Constant } from 'src/common/constant';
+import { Public } from "../../auth/decorator/public.decorator";
 
 @ApiTags('Product')
 @Controller('product')
@@ -44,6 +45,7 @@ export class ProductController {
     @ApiQuery({ name: 'createdAtEnd', type: 'datetime', required: false })
     @ApiQuery({ name: 'updatedAtInit', type: 'datetime', required: false })
     @ApiQuery({ name: 'updatedAtEnd', type: 'datetime', required: false })
+    @Public()
     @Get('/')
     @HttpCode(HttpStatus.OK)
     async getAll(
@@ -62,6 +64,7 @@ export class ProductController {
         return response;
     }
 
+    @Public()
     @Get('/:id')
     @HttpCode(HttpStatus.OK)
     async getById(
