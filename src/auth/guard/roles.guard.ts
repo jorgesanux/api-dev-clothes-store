@@ -13,10 +13,17 @@ export class RolesGuard implements CanActivate {
     canActivate(
         context: ExecutionContext,
     ): boolean | Promise<boolean> | Observable<boolean> {
+        //Only validate handler. If that is public, don't validate parent's role
+        const isPublic: boolean = this.reflector.get<boolean>(
+            Constant.metadataNames.IS_PUBLIC,
+            context.getHandler(),
+        );
+        if (isPublic) return true;
+
         //TODO: Validate how to use getAllAndMerge method from reflector. Fail with login route
         const roles: Role[] = this.reflector.getAllAndOverride<Role[]>(
             Constant.metadataNames.ROLE,
-            [context.getHandler(), context.getClass()]
+            [context.getHandler(), context.getClass()],
         );
         if (!roles) return true;
 
