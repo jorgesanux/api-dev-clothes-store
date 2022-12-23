@@ -25,7 +25,9 @@ import { QueryFailedErrorHandler } from '../../common/handler/query_failed_error
 @Injectable()
 export class OrderService implements IBaseCRUDService<Order, string> {
     relations: Object = {
-        customer: true,
+        customer: {
+            user: true,
+        },
         orderItems: {
             product: true,
         },
