@@ -16,9 +16,4 @@ export class AuthController {
     async login(@Request() req): Promise<JWTResponseModel> {
         return this.authService.generateToken(req.user);
     }
-
-    @Get('/profile')
-    async getProfile(@Request() req): Promise<User> {
-        return req.user;
-    }
 }
