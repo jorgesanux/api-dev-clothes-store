@@ -32,7 +32,9 @@ export class CustomerService implements IBaseCRUDService<Customer, string> {
         private userService: UserService,
     ) {}
 
-    relations: string[] = ['user'];
+    relations: Object | string[] = {
+        user: true,
+    };
 
     async findAll(
         queryDTO: QueryCustomerDTO,
@@ -89,6 +91,26 @@ export class CustomerService implements IBaseCRUDService<Customer, string> {
         if (customer !== null) return customer;
 
         throw new NotFoundException(`Customer with id ${id} not found`);
+    }
+
+    async findByUserId(
+        userId: string,
+        relations = this.relations,
+    ): Promise<Customer> {
+        const customer: Customer = await this.customerRepository.findOne({
+            relations,
+            where: {
+                user: {
+                    id: userId,
+                },
+            },
+        });
+
+        if (customer !== null) return customer;
+
+        throw new NotFoundException(
+            `Customer with User id relation ${userId} not found`,
+        );
     }
 
     async create(payload: CreateCustomerDTO): Promise<Customer> {
