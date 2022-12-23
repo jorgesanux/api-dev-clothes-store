@@ -12,7 +12,7 @@ import {
     Repository,
 } from 'typeorm';
 
-import { BaseServiceInterface } from 'src/common/interface/base-service.interface';
+import { IBaseCRUDService } from 'src/common/interface/base_crud_service.interface';
 import { User } from 'src/user/entity/user.entity';
 import {
     CreateUserDTO,
@@ -20,9 +20,11 @@ import {
     UpdateUserDTO,
 } from 'src/user/dto/user.dto';
 import { QueryFailedErrorHandler } from '../../common/handler/query_failed_error.handler';
+import { AuthHelper } from '../../common/helper/auth.helper';
+import { CastHelper } from '../../common/helper/cast.helper';
 
 @Injectable()
-export class UserService implements BaseServiceInterface<User, string> {
+export class UserService implements IBaseCRUDService<User, string> {
     constructor(
         @InjectRepository(User) private userRepository: Repository<User>,
     ) {}
@@ -66,9 +68,24 @@ export class UserService implements BaseServiceInterface<User, string> {
         throw new NotFoundException(`User with id ${id} not found`);
     }
 
+    async findByEmail(email: string): Promise<User> {
+        const user: User = await this.userRepository.findOne({
+            where: { email },
+        });
+        if (user !== null) return user;
+
+        throw new NotFoundException(`User with email ${email} not found`);
+    }
+
     async create(payload: CreateUserDTO): Promise<User> {
         try {
-            const user: User = this.userRepository.create(payload);
+            // const user: User = this.userRepository.create(payload);
+            const user: User = new User();
+            user.email = payload.email;
+            user.role = payload.role;
+            user.password = CastHelper.StringToBuffer(
+                await AuthHelper.hashPassword(payload.password),
+            );
             return await this.userRepository.save(user);
         } catch (e: unknown) {
             if (e instanceof QueryFailedError)
@@ -80,7 +97,15 @@ export class UserService implements BaseServiceInterface<User, string> {
     async update(id: string, payload: UpdateUserDTO): Promise<User> {
         try {
             const user: User = await this.findOne(id);
-            await this.userRepository.merge(user, payload);
+            // if(Object.keys(payload).length <= 0) return user;
+
+            if (payload.email) user.email = payload.email;
+            if (payload.role) user.role = payload.role;
+            if (payload.password)
+                user.password = CastHelper.StringToBuffer(
+                    await AuthHelper.hashPassword(payload.password),
+                );
+
             return await this.userRepository.save(user);
         } catch (e: unknown) {
             if (e instanceof QueryFailedError)

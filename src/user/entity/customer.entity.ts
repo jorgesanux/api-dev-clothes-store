@@ -1,4 +1,11 @@
-import { Column, Entity, Index, JoinColumn, OneToOne } from 'typeorm';
+import {
+    Column,
+    Entity,
+    Index,
+    JoinColumn,
+    OneToMany,
+    OneToOne,
+} from 'typeorm';
 import { BaseEntity } from '../../common/entity/base.entity';
 import { User } from './user.entity';
 import { Order } from '../../order/entity/order.entity';
@@ -33,8 +40,8 @@ export class Customer extends BaseEntity {
     @Exclude()
     user: User;
 
-    @OneToOne(() => Order, (order) => order.customer)
-    order: Order;
+    @OneToMany(() => Order, (order) => order.customer)
+    orders: Order[];
 
     @Expose()
     get fullName(): string {

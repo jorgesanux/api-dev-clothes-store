@@ -3,7 +3,7 @@ import {
     InternalServerErrorException,
     NotFoundException,
 } from '@nestjs/common';
-import { BaseServiceInterface } from 'src/common/interface/base-service.interface';
+import { IBaseCRUDService } from 'src/common/interface/base_crud_service.interface';
 import {
     CreateOrderDTO,
     UpdateOrderDTO,
@@ -23,9 +23,11 @@ import { CustomerService } from '../../user/service/customer.service';
 import { QueryFailedErrorHandler } from '../../common/handler/query_failed_error.handler';
 
 @Injectable()
-export class OrderService implements BaseServiceInterface<Order, string> {
+export class OrderService implements IBaseCRUDService<Order, string> {
     relations: Object = {
-        customer: true,
+        customer: {
+            user: true,
+        },
         orderItems: {
             product: true,
         },

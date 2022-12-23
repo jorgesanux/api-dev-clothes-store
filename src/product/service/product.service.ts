@@ -21,14 +21,14 @@ import {
     UpdateProductDTO,
 } from 'src/product/dto/product.dto';
 import { Product } from 'src/product/entity/product.entity';
-import { BaseServiceInterface } from 'src/common/interface/base-service.interface';
+import { IBaseCRUDService } from 'src/common/interface/base_crud_service.interface';
 import { QueryFailedErrorHandler } from 'src/common/handler/query_failed_error.handler';
 import { BrandService } from './brand.service';
 import { CategoryService } from './category.service';
 import { Category } from '../entity/category.entity';
 
 @Injectable()
-export class ProductService implements BaseServiceInterface<Product, string> {
+export class ProductService implements IBaseCRUDService<Product, string> {
     relations: string[] = ['brand', 'categories'];
 
     constructor(

@@ -19,11 +19,11 @@ import {
     QueryBrandDTO,
 } from 'src/product/dto/brand.dto';
 import { Brand } from 'src/product/entity/brand.entity';
-import { BaseServiceInterface } from 'src/common/interface/base-service.interface';
+import { IBaseCRUDService } from 'src/common/interface/base_crud_service.interface';
 import { QueryFailedErrorHandler } from 'src/common/handler/query_failed_error.handler';
 
 @Injectable()
-export class BrandService implements BaseServiceInterface<Brand, string> {
+export class BrandService implements IBaseCRUDService<Brand, string> {
     constructor(
         @InjectRepository(Brand) private brandRepository: Repository<Brand>,
     ) {}

@@ -19,7 +19,7 @@ export class Order extends BaseEntity {
     @Column({ type: 'text', nullable: true })
     observation: string;
 
-    @ManyToOne(() => Customer, (customer) => customer.order)
+    @ManyToOne(() => Customer, (customer) => customer.orders)
     @JoinColumn({ name: 'customer_id' })
     @Index()
     customer: Customer;

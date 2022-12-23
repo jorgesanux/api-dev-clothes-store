@@ -21,10 +21,12 @@ import {
 import { Customer } from 'src/user/entity/customer.entity';
 import { ApiResponse } from 'src/common/interface/api_response.interface';
 import { CustomerService } from 'src/user/service/customer.service';
-import { Constant } from 'src/common/constant';
+import { Roles } from '../../auth/decorator/roles.decorator';
+import { Role } from '../../auth/model/role.model';
 
 @ApiTags('Customer')
 @Controller('customer')
+@Roles([Role.ADMIN])
 export class CustomerController {
     constructor(private customerService: CustomerService) {}
 

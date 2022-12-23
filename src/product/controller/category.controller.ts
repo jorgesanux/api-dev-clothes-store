@@ -6,7 +6,6 @@ import {
     HttpCode,
     HttpStatus,
     Param,
-    ParseIntPipe,
     ParseUUIDPipe,
     Post,
     Put,
@@ -22,10 +21,13 @@ import {
     QueryCategoryDTO,
     UpdateCategoryDTO,
 } from 'src/product/dto/category.dto';
-import { Constant } from 'src/common/constant';
+import { Public } from '../../auth/decorator/public.decorator';
+import { Roles } from '../../auth/decorator/roles.decorator';
+import { Role } from '../../auth/model/role.model';
 
 @ApiTags('Category')
 @Controller('category')
+@Roles([Role.ADMIN])
 export class CategoryController {
     constructor(private categoryService: CategoryService) {}
 
@@ -37,6 +39,7 @@ export class CategoryController {
     @ApiQuery({ name: 'createdAtEnd', type: 'datetime', required: false })
     @ApiQuery({ name: 'updatedAtInit', type: 'datetime', required: false })
     @ApiQuery({ name: 'updatedAtEnd', type: 'datetime', required: false })
+    @Public()
     @Get('/')
     @HttpCode(HttpStatus.OK)
     async getAll(
@@ -55,6 +58,7 @@ export class CategoryController {
         return response;
     }
 
+    @Public()
     @Get('/:id')
     @HttpCode(HttpStatus.OK)
     async getById(

@@ -20,11 +20,11 @@ import {
     UpdateCategoryDTO,
 } from 'src/product/dto/category.dto';
 import { Category } from 'src/product/entity/category.entity';
-import { BaseServiceInterface } from 'src/common/interface/base-service.interface';
+import { IBaseCRUDService } from 'src/common/interface/base_crud_service.interface';
 import { QueryFailedErrorHandler } from 'src/common/handler/query_failed_error.handler';
 
 @Injectable()
-export class CategoryService implements BaseServiceInterface<Category, string> {
+export class CategoryService implements IBaseCRUDService<Category, string> {
     constructor(
         @InjectRepository(Category)
         private categoryRepository: Repository<Category>,

@@ -21,9 +21,12 @@ import {
 import { User } from 'src/user/entity/user.entity';
 import { ApiResponse } from 'src/common/interface/api_response.interface';
 import { UserService } from 'src/user/service/user.service';
+import { Roles } from '../../auth/decorator/roles.decorator';
+import { Role } from '../../auth/model/role.model';
 
 @ApiTags('User')
 @Controller('user')
+@Roles([Role.ADMIN])
 export class UserController {
     constructor(private userService: UserService) {}
 

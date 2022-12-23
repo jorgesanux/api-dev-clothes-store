@@ -20,19 +20,21 @@ import {
     UpdateCustomerDTO,
 } from 'src/user/dto/customer.dto';
 import { Customer } from 'src/user/entity/customer.entity';
-import { BaseServiceInterface } from 'src/common/interface/base-service.interface';
+import { IBaseCRUDService } from 'src/common/interface/base_crud_service.interface';
 import { QueryFailedErrorHandler } from 'src/common/handler/query_failed_error.handler';
 import { UserService } from './user.service';
 
 @Injectable()
-export class CustomerService implements BaseServiceInterface<Customer, string> {
+export class CustomerService implements IBaseCRUDService<Customer, string> {
     constructor(
         @InjectRepository(Customer)
         private customerRepository: Repository<Customer>,
         private userService: UserService,
     ) {}
 
-    relations: string[] = ['user'];
+    relations: Object | string[] = {
+        user: true,
+    };
 
     async findAll(
         queryDTO: QueryCustomerDTO,
@@ -89,6 +91,26 @@ export class CustomerService implements BaseServiceInterface<Customer, string> {
         if (customer !== null) return customer;
 
         throw new NotFoundException(`Customer with id ${id} not found`);
+    }
+
+    async findByUserId(
+        userId: string,
+        relations = this.relations,
+    ): Promise<Customer> {
+        const customer: Customer = await this.customerRepository.findOne({
+            relations,
+            where: {
+                user: {
+                    id: userId,
+                },
+            },
+        });
+
+        if (customer !== null) return customer;
+
+        throw new NotFoundException(
+            `Customer with User id relation ${userId} not found`,
+        );
     }
 
     async create(payload: CreateCustomerDTO): Promise<Customer> {

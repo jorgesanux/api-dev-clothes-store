@@ -1,5 +1,6 @@
 import { registerAs } from '@nestjs/config';
 import { Constant } from './common/constant';
+import * as process from 'process';
 
 export default registerAs(Constant.providerKeys.ENV_CONFIG, () => {
     return {
@@ -12,6 +13,9 @@ export default registerAs(Constant.providerKeys.ENV_CONFIG, () => {
                 pass: process.env.PG_PASS,
                 ssl: process.env.PG_SSL === 'true',
             },
+        },
+        jwt: {
+            secret: process.env.JWT_SECRET,
         },
     };
 });
