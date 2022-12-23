@@ -17,7 +17,7 @@ const jwtModule: DynamicModule = JwtModule.registerAsync({
         return {
             secret: configService.jwt.secret,
             signOptions: {
-                expiresIn: '60s',
+                expiresIn: '60m',
             },
         };
     },
