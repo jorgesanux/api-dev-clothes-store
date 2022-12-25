@@ -3,6 +3,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import * as morgan from 'morgan';
+import helmet from 'helmet';
 
 async function bootstrap() {
     const app = await NestFactory.create(AppModule);
@@ -14,6 +15,7 @@ async function bootstrap() {
         }),
     );
     app.use(morgan('dev'));
+    app.use(helmet());
     app.setGlobalPrefix('/api');
     app.enableCors();
 
