@@ -16,7 +16,7 @@ async function bootstrap() {
     );
     app.use(morgan('dev'));
     app.use(helmet());
-    app.setGlobalPrefix('/api');
+    // app.setGlobalPrefix('/api');
     app.enableCors();
 
     const configSwagger = new DocumentBuilder()
