@@ -29,7 +29,11 @@ async function bootstrap() {
         )
         .build();
     const documentSwagger = SwaggerModule.createDocument(app, configSwagger);
-    SwaggerModule.setup('docs', app, documentSwagger);
+    SwaggerModule.setup('docs', app, documentSwagger, {
+        customfavIcon: '/public/favicon/favicon.ico',
+        customSiteTitle: "Api Dev Clothes Store | Swagger",
+        customCssUrl: '/public/css/swagger-dark.css'
+    });
 
     await app.listen(process.env.PORT || 3000);
 }
