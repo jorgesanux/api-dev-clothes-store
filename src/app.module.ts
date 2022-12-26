@@ -6,6 +6,7 @@ import {
 } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import * as Joi from 'joi';
+import { join } from 'path';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -14,10 +15,13 @@ import { ProductModule } from './product/product.module';
 import { OrderModule } from './order/order.module';
 import { DatabaseModule } from './database/database.module';
 import config from './config';
-import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
+import { APP_GUARD, APP_INTERCEPTOR, RouterModule } from '@nestjs/core';
 import { AuthModule } from './auth/auth.module';
 import { JwtAuthGuard } from './auth/guard/jwt_auth.guard';
 import { RolesGuard } from './auth/guard/roles.guard';
+import { ApiModule } from './api/api.module';
+import { AppRoute } from './app.route';
+import { ServeStaticModule } from '@nestjs/serve-static';
 
 /* Providers */
 const providerClassSerializerInterceptor: Provider<ClassSerializerInterceptor> =
@@ -61,14 +65,17 @@ const configModule: DynamicModule = ConfigModule.forRoot({
     }),
 });
 
+const serveStaticModule: DynamicModule = ServeStaticModule.forRoot({
+    rootPath: join(__dirname, '..', 'public'),
+    serveRoot: '/public',
+});
+
 @Module({
     imports: [
         configModule,
-        UserModule,
-        ProductModule,
-        OrderModule,
-        DatabaseModule,
-        AuthModule,
+        RouterModule.register(AppRoute),
+        ApiModule,
+        serveStaticModule,
     ],
     controllers: [AppController],
     providers: [

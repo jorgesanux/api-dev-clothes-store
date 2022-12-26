@@ -1,4 +1,5 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Res } from '@nestjs/common';
+import { Response } from 'express';
 import { AppService } from './app.service';
 import { Public } from './auth/decorator/public.decorator';
 
@@ -8,7 +9,9 @@ export class AppController {
 
     @Public()
     @Get('/')
-    getHello(): string {
-        return this.appService.getHello();
+    root(@Res() res: Response): void {
+        res.sendFile('index.html', {
+            root: 'public',
+        });
     }
 }
