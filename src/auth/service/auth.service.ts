@@ -18,6 +18,7 @@ import {
 import { CreateUserDTO } from '../../user/dto/user.dto';
 import { CreateCustomerDTO } from '../../user/dto/customer.dto';
 import { QueryFailedErrorHandler } from '../../common/handler/query_failed_error.handler';
+import { EmailService } from '../../email/service/email.service';
 
 @Injectable()
 export class AuthService {
@@ -25,6 +26,7 @@ export class AuthService {
         private userService: UserService,
         private customerService: CustomerService,
         private jwtService: JwtService,
+        private emailService: EmailService,
         private dataSource: DataSource,
     ) {}
 
@@ -56,6 +58,15 @@ export class AuthService {
         const decodedToken: JWTPayloadModel = this.jwtService.decode(token, {
             json: true,
         }) as JWTPayloadModel;
+        this.emailService
+            .sendEmail({
+                to: user.email,
+                subject: 'Login on DEV Clothes Store',
+                text: `${
+                    user.email
+                }. We are detected a login in your account at ${new Date().toLocaleString()}.`,
+            })
+            .then();
 
         return {
             accessToken: token,
