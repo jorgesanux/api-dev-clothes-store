@@ -17,5 +17,11 @@ export default registerAs(Constant.providerKeys.ENV_CONFIG, () => {
         jwt: {
             secret: process.env.JWT_SECRET,
         },
+        email: {
+            host: process.env.MAIL_HOST,
+            port: Number(process.env.MAIL_PORT),
+            user: process.env.MAIL_USER,
+            pass: process.env.MAIL_PASS,
+        },
     };
 });
