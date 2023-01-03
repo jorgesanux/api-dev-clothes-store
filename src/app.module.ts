@@ -1,10 +1,11 @@
 import {
     ClassSerializerInterceptor,
     DynamicModule,
+    Inject,
     Module,
     Provider,
 } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigType } from '@nestjs/config';
 import * as Joi from 'joi';
 import { join } from 'path';
 
@@ -22,6 +23,8 @@ import { RolesGuard } from './auth/guard/roles.guard';
 import { ApiModule } from './api/api.module';
 import { AppRoute } from './app.route';
 import { ServeStaticModule } from '@nestjs/serve-static';
+import { EmailModule } from './email/email.module';
+import { EmailConfigOptions } from './email/interface/email_config_options.interface';
 
 /* Providers */
 const providerClassSerializerInterceptor: Provider<ClassSerializerInterceptor> =
@@ -62,6 +65,10 @@ const configModule: DynamicModule = ConfigModule.forRoot({
         PG_PASS: Joi.string().required(),
         PG_SSL: Joi.boolean().required(),
         JWT_SECRET: Joi.string().required(),
+        MAIL_HOST: Joi.string().required(),
+        MAIL_PORT: Joi.number().required(),
+        MAIL_USER: Joi.string().required(),
+        MAIL_PASS: Joi.string().required(),
     }),
 });
 
@@ -70,10 +77,33 @@ const serveStaticModule: DynamicModule = ServeStaticModule.forRoot({
     serveRoot: '/public',
 });
 
+const emailModule: DynamicModule = EmailModule.forRootAsync({
+    useFactory: (
+        configService: ConfigType<typeof config>,
+    ): EmailConfigOptions => {
+        return {
+            smtpTransportConfig: {
+                host: configService.email.host,
+                port: configService.email.port,
+                auth: {
+                    user: configService.email.user,
+                    pass: configService.email.pass,
+                },
+            },
+            smtpTransportDefaults: {
+                from: 'Clothes Store <noreply@clothesstore.com>',
+            },
+        };
+    },
+    inject: [config.KEY],
+    isGlobal: true,
+});
+
 @Module({
     imports: [
         configModule,
         RouterModule.register(AppRoute),
+        emailModule,
         ApiModule,
         serveStaticModule,
     ],
