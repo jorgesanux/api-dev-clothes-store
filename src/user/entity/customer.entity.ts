@@ -50,11 +50,11 @@ export class Customer extends BaseEntity {
 
     @Expose()
     get email(): string {
-        return this.user.email;
+        return this.user?.email;
     }
 
     @Expose()
     get role(): string {
-        return this.user.role;
+        return this.user?.role;
     }
 }

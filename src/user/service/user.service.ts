@@ -7,6 +7,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import {
     Between,
     DeleteResult,
+    EntityManager,
     FindOptionsWhere,
     QueryFailedError,
     Repository,
@@ -25,6 +26,8 @@ import { CastHelper } from '../../common/helper/cast.helper';
 
 @Injectable()
 export class UserService implements IBaseCRUDService<User, string> {
+    relations: Object | string[];
+
     constructor(
         @InjectRepository(User) private userRepository: Repository<User>,
     ) {}
@@ -61,15 +64,25 @@ export class UserService implements IBaseCRUDService<User, string> {
         });
     }
 
-    async findOne(id: string): Promise<User> {
-        const user: User = await this.userRepository.findOneBy({ id });
+    async findOne(
+        id: string,
+        entityManager: EntityManager = null,
+    ): Promise<User> {
+        const where: FindOptionsWhere<User> = { id };
+        const user: User = entityManager
+            ? await entityManager.getRepository(User).findOneBy(where)
+            : await this.userRepository.findOneBy(where);
         if (user !== null) return user;
 
         throw new NotFoundException(`User with id ${id} not found`);
     }
 
-    async findByEmail(email: string): Promise<User> {
+    async findByEmail(
+        email: string,
+        relations = this.relations,
+    ): Promise<User> {
         const user: User = await this.userRepository.findOne({
+            relations,
             where: { email },
         });
         if (user !== null) return user;
@@ -77,8 +90,12 @@ export class UserService implements IBaseCRUDService<User, string> {
         throw new NotFoundException(`User with email ${email} not found`);
     }
 
-    async create(payload: CreateUserDTO): Promise<User> {
+    async create(
+        payload: CreateUserDTO,
+        entityManager: EntityManager = null,
+    ): Promise<User> {
         try {
+            if (!entityManager) entityManager = this.userRepository.manager;
             // const user: User = this.userRepository.create(payload);
             const user: User = new User();
             user.email = payload.email;
@@ -86,7 +103,7 @@ export class UserService implements IBaseCRUDService<User, string> {
             user.password = CastHelper.StringToBuffer(
                 await AuthHelper.hashPassword(payload.password),
             );
-            return await this.userRepository.save(user);
+            return await entityManager.getRepository(User).save(user);
         } catch (e: unknown) {
             if (e instanceof QueryFailedError)
                 QueryFailedErrorHandler.handle(e as QueryFailedError);

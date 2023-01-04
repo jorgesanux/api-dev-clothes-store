@@ -8,6 +8,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import {
     Between,
     DeleteResult,
+    EntityManager,
     FindOptionsWhere,
     Like,
     QueryFailedError,
@@ -113,11 +114,18 @@ export class CustomerService implements IBaseCRUDService<Customer, string> {
         );
     }
 
-    async create(payload: CreateCustomerDTO): Promise<Customer> {
+    async create(
+        payload: CreateCustomerDTO,
+        entityManager: EntityManager = null,
+    ): Promise<Customer> {
         try {
+            if (!entityManager) entityManager = this.customerRepository.manager;
             const customer: Customer = this.customerRepository.create(payload);
-            customer.user = await this.userService.findOne(payload.userId);
-            return await this.customerRepository.save(customer);
+            customer.user = await this.userService.findOne(
+                payload.userId,
+                entityManager,
+            );
+            return await entityManager.getRepository(Customer).save(customer);
         } catch (e: unknown) {
             if (e instanceof QueryFailedError)
                 QueryFailedErrorHandler.handle(e as QueryFailedError);

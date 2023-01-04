@@ -2,7 +2,7 @@ import { BaseEntity } from '../entity/base.entity';
 import { BaseQueryDTO } from '../dto/base_query.dto';
 
 export interface IBaseCRUDService<T extends BaseEntity = any, Y = any> {
-    relations?: string[] | Object;
+    relations: string[] | Object;
     findAll(
         queryDTO: BaseQueryDTO,
         relations?: string[] | Object,

@@ -25,6 +25,7 @@ import { QueryFailedErrorHandler } from 'src/common/handler/query_failed_error.h
 
 @Injectable()
 export class CategoryService implements IBaseCRUDService<Category, string> {
+    relations: string[] | Object;
     constructor(
         @InjectRepository(Category)
         private categoryRepository: Repository<Category>,
