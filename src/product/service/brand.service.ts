@@ -24,6 +24,7 @@ import { QueryFailedErrorHandler } from 'src/common/handler/query_failed_error.h
 
 @Injectable()
 export class BrandService implements IBaseCRUDService<Brand, string> {
+    relations: string[] | Object;
     constructor(
         @InjectRepository(Brand) private brandRepository: Repository<Brand>,
     ) {}

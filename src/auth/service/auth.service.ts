@@ -58,16 +58,6 @@ export class AuthService {
         const decodedToken: JWTPayloadModel = this.jwtService.decode(token, {
             json: true,
         }) as JWTPayloadModel;
-        this.emailService
-            .sendEmail({
-                to: user.email,
-                subject: 'Login on DEV Clothes Store',
-                text: `${
-                    user.email
-                }. We are detected a login in your account at ${new Date().toLocaleString()}.`,
-            })
-            .then();
-
         return {
             accessToken: token,
             expiresIn: AuthHelper.calculateTimeToExpire(decodedToken.exp),

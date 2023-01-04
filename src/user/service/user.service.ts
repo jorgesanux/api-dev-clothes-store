@@ -26,6 +26,8 @@ import { CastHelper } from '../../common/helper/cast.helper';
 
 @Injectable()
 export class UserService implements IBaseCRUDService<User, string> {
+    relations: Object | string[];
+
     constructor(
         @InjectRepository(User) private userRepository: Repository<User>,
     ) {}
@@ -75,8 +77,12 @@ export class UserService implements IBaseCRUDService<User, string> {
         throw new NotFoundException(`User with id ${id} not found`);
     }
 
-    async findByEmail(email: string): Promise<User> {
+    async findByEmail(
+        email: string,
+        relations = this.relations,
+    ): Promise<User> {
         const user: User = await this.userRepository.findOne({
+            relations,
             where: { email },
         });
         if (user !== null) return user;
